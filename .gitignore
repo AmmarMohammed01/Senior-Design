@@ -1,4 +1,5 @@
 .venv
+images
 *.png
 *.jpg
 .DS_Store

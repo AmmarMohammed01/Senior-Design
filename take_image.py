@@ -1,0 +1,70 @@
+# take_image.py
+import cv2 as cv
+
+def take_golden_board_image():
+    """Take image of GOLDEN board"""
+    capture = cv.VideoCapture(0)
+    if not capture.isOpened():
+        print("Cannot open camera")
+        exit()
+
+    while True:
+        # Capture frame-by-frame
+        ret, frame = capture.read()
+
+        # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
+
+        cv.imshow('frame', frame)
+        if cv.waitKey(1) == ord('q'):
+            break
+
+    # When everything done, release the capture
+    capture.release()
+    cv.destroyAllWindows()
+
+    # Let user select ROI (drag a box)
+    roi = cv.selectROI("Select ROI", frame, False) # tuple: (x,y, width, height)
+
+    # Extract cropped region
+    cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+
+    # Save and display cropped image
+    cv.imwrite("Board1.png", cropped_img) # CHANGE BOARD NAMING SCHEME
+    # MAYBE RETURN ROI for test board image, NEED TO STORE SINCE TAKING MULTIPLE TEST BOARD IMAGES
+
+def take_test_board_image():
+    """Take image of TEST board"""
+
+    capture = cv.VideoCapture(0)
+
+    if not capture.isOpened():
+        print("Cannot open camera")
+        exit()
+
+    while True:
+        # Capture frame-by-frame
+        ret, frame = capture.read()
+
+        # if frame is read correctly ret is True
+        if not ret:
+            print("Can't receive frame (stream end?). Exiting ...")
+            break
+
+        cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
+
+        cv.imshow('frame', frame)
+        if cv.waitKey(1) == ord('q'):
+            break
+
+    # Extract cropped region
+    cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+
+    # Save and display cropped image
+    cv.imwrite("Board2.png", cropped_img)
+
+    # When everything done, release the capture
+    capture.release()
+    cv.destroyAllWindows()
