@@ -1,7 +1,11 @@
 # take_image.py
+'''
+TODO: FIX ROI variable, before dividing the code in functions I used the roi from take_golden_board for take_test_board
+'''
+
 import cv2 as cv
 
-def take_golden_board_image():
+def take_golden_board_image(board_name):
     """Take image of GOLDEN board"""
     capture = cv.VideoCapture(0)
     if not capture.isOpened():
@@ -31,11 +35,12 @@ def take_golden_board_image():
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
+    golden_board_file_name = board_name + "-golden.png"
     # Save and display cropped image
-    cv.imwrite("Board1.png", cropped_img) # CHANGE BOARD NAMING SCHEME
+    cv.imwrite(golden_board_file_name, cropped_img)
     # MAYBE RETURN ROI for test board image, NEED TO STORE SINCE TAKING MULTIPLE TEST BOARD IMAGES
 
-def take_test_board_image():
+def take_test_board_image(board_name):
     """Take image of TEST board"""
 
     capture = cv.VideoCapture(0)
@@ -63,7 +68,8 @@ def take_test_board_image():
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
     # Save and display cropped image
-    cv.imwrite("Board2.png", cropped_img)
+    test_board_file_name = board_name + "-test.png"
+    cv.imwrite(test_board_file_name, cropped_img)
 
     # When everything done, release the capture
     capture.release()
