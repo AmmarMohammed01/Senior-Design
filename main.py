@@ -8,8 +8,20 @@ from take_image import take_golden_board_image, take_test_board_image
 
 def main():
     """The program routine"""
-    take_golden_board_image()
-    take_test_board_image()
+
+    '''
+    GUI over here:
+    - Select from list of existing board types
+    - Add new board type
+    - Remove board type
+    '''
+
+    print("What is the name of the golden board?")
+    board_type = input()
+    take_golden_board_image(board_type)
+
+    # print("What type of test board is being used")
+    take_test_board_image(board_type)
     compare_boards()
 
 # Run program here
