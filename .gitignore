@@ -3,3 +3,6 @@ images
 *.png
 *.jpg
 .DS_Store
+dev.txt
+.python3.9venv
+labeled\ images
