@@ -1,6 +1,16 @@
 import cv2 as cv
 
 class YOLOLabel:
+    '''YOLOLabel stores labels from the YOLO format
+    A YOLO label looks like this:
+    0 0.418945 0.359375 0.055339 0.088349
+
+    1ST number: class or name of label
+    2ND number: x coordinate for the center of the label, shown as percentage of the image width
+    3RD number: y coordinate for the center of the label, shown as percentage of the image width
+    4TH number: width of the label, shown as percentage of the image width
+    5TH number: height of the label, shown as percentage of the image height
+    '''
     def __init__(self, label_name="", label_x=0.0, label_y=0.0, label_width=0.0, label_height=0.0):
         '''YOLOLabel constructor'''
         self.label_name = label_name
@@ -20,18 +30,15 @@ class YOLOLabel:
 
     def print_label(self):
         print(f"YOLOLabel contents: {self.label_name}, {self.label_x}, {self.label_y}, {self.label_width}, {self.label_height}")
-        # print(type(self.label_name))
-        # print(type(self.label_x))
-        # print(type(self.label_y))
 
 def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file):
-    '''Given the heatmap of differences between golden and test boards,
-    and the labeled components of the golden board,
-    draw the labels on the heatmap image'''
+    '''Given:
+    1. the heatmap of differences between golden and test boards,
+    2. the labeled components of the golden board.
 
-    heatmap_img = cv.imread(heatmap_img_file)
-    # print(type(heatmap_img)) #numpy.ndarray
-    # height, width, channels = heatmap_img.shape
+    Draw the labels on the heatmap image'''
+
+    heatmap_img = cv.imread(heatmap_img_file) #numpy.ndarray
     height = 0
     width = 0
 
@@ -42,44 +49,12 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
         print("Heatmap Image not found")
         exit()
 
-    golden_board_component_points = []
-    golden_board_componennt_names = []
-
-    # Get the YOLO label coordinates
-    try:
-        with open(golden_board_components_file) as f:
-            # content = f.read()
-            # print(content)
-            for line in f:
-                golden_board_component_points.append(line.strip())
-
-    except FileNotFoundError:
-        print(f"Error: The file '{golden_board_components_file}' was not found")
-
-    # Get the YOLO label class names
-    try:
-        with open(golden_board_classes_file) as f:
-            for line in f:
-                golden_board_componennt_names.append(line.strip())
-
-    except FileNotFoundError:
-        print(f"Error: The file '{golden_board_components_file}' was not found")
+    golden_board_component_points = get_YOLO_label(golden_board_components_file)
+    golden_board_componennt_names = get_YOLO_classes(golden_board_classes_file)
 
     # Plot labels onto board heatmap
     if golden_board_component_points and golden_board_componennt_names:
-        print(golden_board_component_points)
-        # label1 = YOLOLabel()
-        # label1.convert_to_label(golden_board_component_points[0], golden_board_componennt_names)
-        # label1.print_label()
-
-        # center_x = label1.label_x * width
-        # center_y = label1.label_y * height
-        # y1, y2 = center_y - (height * label1.label_height) / 2, center_y + (height * label1.label_height) / 2
-        # x1, x2 = center_x - (width * label1.label_width) / 2, center_x + (width * label1.label_width) / 2
-        # x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
-        # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
-
-        # cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
+        # print(golden_board_component_points)
 
         for label_info in golden_board_component_points:
             current_label = YOLOLabel()
@@ -90,14 +65,37 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             y1, y2 = center_y - (height * current_label.label_height) / 2, center_y + (height * current_label.label_height) / 2
             x1, x2 = center_x - (width * current_label.label_width) / 2, center_x + (width * current_label.label_width) / 2
             x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
-            print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
+            # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
             cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
-
 
         cv.imshow('heatmap', heatmap_img)
         if cv.waitKey(0) == ord('q'):
             cv.destroyAllWindows()
+
+def get_YOLO_label(golden_board_components_file):
+    '''Get the YOLO label coordinates'''
+    try:
+        golden_board_component_points = []
+        with open(golden_board_components_file) as f:
+            for line in f:
+                golden_board_component_points.append(line.strip())
+        return golden_board_component_points
+
+    except FileNotFoundError:
+        print(f"Error: The file '{golden_board_components_file}' was not found")
+
+def get_YOLO_classes(golden_board_classes_file):
+    '''Get the YOLO label class names'''
+    try:
+        golden_board_componennt_names = []
+        with open(golden_board_classes_file) as f:
+            for line in f:
+                golden_board_componennt_names.append(line.strip())
+        return golden_board_componennt_names
+
+    except FileNotFoundError:
+        print(f"Error: The file '{golden_board_classes_file}' was not found")
 
 map_errors('./images/SSIM_with_blur2_grayAfterBlur_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 
