@@ -1,8 +1,10 @@
 .venv
-images
 *.png
-*.jpg
 .DS_Store
 dev.txt
 .python3.9venv
+
+images/Board1.png
+images/Board2.png
+images/SSIM*
 labeled\ images
