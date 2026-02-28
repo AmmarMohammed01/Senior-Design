@@ -1,4 +1,10 @@
-# take_image.py
+"""
+FILE: take_image.py
+Contains two functions:
+- take_golden_board_image(board_name)
+- take_test_board_image(board_name)
+"""
+
 '''
 TODO: FIX ROI variable, before dividing the code in functions I used the roi from take_golden_board for take_test_board
 '''

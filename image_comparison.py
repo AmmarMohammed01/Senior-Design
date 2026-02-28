@@ -1,4 +1,10 @@
-# image_comparison.py
+"""
+FILE: image_comparison.py
+Contains two functions:
+- ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255)
+- compare_boards()
+"""
+
 import cv2 as cv
 import numpy as np
 
@@ -41,36 +47,55 @@ def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255):
     ssim_index = np.mean(ssim_map)
     return ssim_index, ssim_map
 
-def compare_boards():
+def compare_boards(img1_file, img2_file):
     """Compare two boards"""
-    # board1 = cv.imread("Board1.png", cv.IMREAD_GRAYSCALE)
-    # board2 = cv.imread("Board2.png", cv.IMREAD_GRAYSCALE)
-    # board1 = cv.imread("../learn/opencv/images/board_golden.jpg", cv.IMREAD_GRAYSCALE)
-    # board2 = cv.imread("../learn/opencv/images/board_test.jpg", cv.IMREAD_GRAYSCALE)
-    board1 = cv.imread("../learn/opencv/images/board_golden.jpg")
-    board2 = cv.imread("../learn/opencv/images/board_test.jpg")
+    img1 = cv.imread(img1_file)
+    img2 = cv.imread(img2_file)
 
-    # Apply blur
-    board1 = cv.GaussianBlur(board1, (15,15), 0)
-    board2 = cv.GaussianBlur(board2, (15,15), 0)
+    if img1 is None or img2 is None:
+        raise FileNotFoundError("One or both images not found. Make sure 'image1.png' and 'image2.png' are uploaded!")
 
-    board1 = cv.cvtColor(board1, cv.COLOR_BGR2GRAY)
-    board2 = cv.cvtColor(board2, cv.COLOR_BGR2GRAY)
+    # --- Resize to same dimensions ---
+    h = min(img1.shape[0], img2.shape[0])
+    w = min(img1.shape[1], img2.shape[1])
+    img1 = cv.resize(img1, (w, h))
+    img2 = cv.resize(img2, (w, h))
 
-    score, diff = ssim(board1, board2, full=True)
-    print(f"SSIM Score: {score}")
-    print(type(diff))
-    print(diff.shape)
-    print(diff.dtype)
+    # --- Downscale → blur → upscale trick ---
+    def smooth_blur(img, scale=0.25, kernel=(15, 15), sigma=00):
+        small = cv.resize(img, (0, 0), fx=scale, fy=scale)
+        blurred_small = cv.GaussianBlur(small, kernel, sigma)
+        return cv.resize(blurred_small, (img.shape[1], img.shape[0]))
 
-    # Normalize diff image to 0–255 for applyColorMap
-    # b/c diff was float64 with each pixel value range [0,1], we need uint8 range [0,255] for each grayscale pixel
-    diff = (diff * 255).astype("uint8")
-    diff = 1 - diff
-    inferno = cv.applyColorMap(diff, cv.COLORMAP_INFERNO)
+    blur1 = smooth_blur(img1)
+    blur2 = smooth_blur(img2)
+
+    # --- Convert to grayscale for SSIM ---
+    gray1 = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
+    gray2 = cv.cvtColor(img2, cv.COLOR_BGR2GRAY)
+    gray_blur1 = cv.cvtColor(blur1, cv.COLOR_BGR2GRAY)
+    gray_blur2 = cv.cvtColor(blur2, cv.COLOR_BGR2GRAY)
+
+    # --- Compute SSIM difference maps ---
+    score_orig, diff_originals = ssim(gray1, gray2)
+    score_blur, diff_blurred = ssim(gray_blur1, gray_blur2)
+
+    # Invert SSIM to show differences
+    diff_originals = 1 - diff_originals
+    diff_blurred = 1 - diff_blurred
+
+    # Normalize for visualization
+    diff_originals = cv.normalize(diff_originals, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
+    diff_blurred = cv.normalize(diff_blurred, None, 0, 255, cv.NORM_MINMAX).astype(np.uint8)
+
+    print(f"SSIM (Originals): {score_orig:.4f}")
+    print(f"SSIM (Blurred):  {score_blur:.4f}")
+
+    inferno = cv.applyColorMap(diff_blurred, cv.COLORMAP_INFERNO)
+    # cv.imwrite("./images/board_inferno.jpg", inferno)
 
     cv.imshow('difference', inferno)
     if cv.waitKey(0) == ord('q'):
         cv.destroyAllWindows()
 
-    # cv.imwrite("SSIM_with_blur2_grayAfterBlur_inferno.jpg", inferno)
+compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")

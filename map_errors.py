@@ -1,7 +1,15 @@
+"""
+FILE: map_errors.py
+Contains:
+- class YOLOLabel
+- def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file)
+- def get_YOLO_label(golden_board_components_file)
+- def get_YOLO_classes(golden_board_classes_file)
+"""
 import cv2 as cv
 
 class YOLOLabel:
-    '''YOLOLabel stores labels from the YOLO format
+    """YOLOLabel stores labels from the YOLO format
     A YOLO label looks like this:
     0 0.418945 0.359375 0.055339 0.088349
 
@@ -10,9 +18,9 @@ class YOLOLabel:
     3RD number: y coordinate for the center of the label, shown as percentage of the image width
     4TH number: width of the label, shown as percentage of the image width
     5TH number: height of the label, shown as percentage of the image height
-    '''
+    """
     def __init__(self, label_name="", label_x=0.0, label_y=0.0, label_width=0.0, label_height=0.0):
-        '''YOLOLabel constructor'''
+        """YOLOLabel constructor"""
         self.label_name = label_name
         self.label_x = label_x
         self.label_y = label_y
@@ -20,7 +28,7 @@ class YOLOLabel:
         self.label_height = label_height
 
     def convert_to_label(self, label_coordinates, label_classes):
-        '''Given a line from the YOLO coordinates YOLO classes files, convert to label object'''
+        """Given a line from the YOLO coordinates YOLO classes files, convert to label object"""
         label_contents = label_coordinates.split()
         self.label_name = label_classes[ int(label_contents[0]) ]
         self.label_x = float(label_contents[1])
@@ -32,11 +40,11 @@ class YOLOLabel:
         print(f"YOLOLabel contents: {self.label_name}, {self.label_x}, {self.label_y}, {self.label_width}, {self.label_height}")
 
 def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file):
-    '''Given:
+    """Given:
     1. the heatmap of differences between golden and test boards,
     2. the labeled components of the golden board.
 
-    Draw the labels on the heatmap image'''
+    Draw the labels on the heatmap image"""
 
     heatmap_img = cv.imread(heatmap_img_file) #numpy.ndarray
     height = 0
@@ -74,7 +82,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             cv.destroyAllWindows()
 
 def get_YOLO_label(golden_board_components_file):
-    '''Get the YOLO label coordinates'''
+    """Get the YOLO label coordinates"""
     try:
         golden_board_component_points = []
         with open(golden_board_components_file) as f:
@@ -86,7 +94,7 @@ def get_YOLO_label(golden_board_components_file):
         print(f"Error: The file '{golden_board_components_file}' was not found")
 
 def get_YOLO_classes(golden_board_classes_file):
-    '''Get the YOLO label class names'''
+    """Get the YOLO label class names"""
     try:
         golden_board_componennt_names = []
         with open(golden_board_classes_file) as f:
@@ -97,5 +105,5 @@ def get_YOLO_classes(golden_board_classes_file):
     except FileNotFoundError:
         print(f"Error: The file '{golden_board_classes_file}' was not found")
 
-map_errors('./images/SSIM_with_blur2_grayAfterBlur_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
+map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 
