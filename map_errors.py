@@ -30,6 +30,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
     draw the labels on the heatmap image'''
 
     heatmap_img = cv.imread(heatmap_img_file)
+    print(type(heatmap_img)) #numpy.ndarray
     # height, width, channels = heatmap_img.shape
     height = 0
     width = 0
@@ -71,11 +72,14 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
         label1.convert_to_label(golden_board_component_points[0], golden_board_componennt_names)
         label1.print_label()
 
-        center_x = int(label1.label_x * label1.label_width)
-        center_y = int(label1.label_y * label1.label_height)
+        center_x = label1.label_x * width
+        center_y = label1.label_y * height
+        y1, y2 = center_y - (height * label1.label_height) / 2, center_y + (height * label1.label_height) / 2
+        x1, x2 = center_x - (width * label1.label_width) / 2, center_x + (width * label1.label_width) / 2
+        x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+        print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
-        # cv.circle(heatmap_img, (center_x, center_y), 100, (0, 255, 0), 20)
-        cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 20)
+        cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
 
         cv.imshow('heatmap', heatmap_img)
         if cv.waitKey(0) == ord('q'):
