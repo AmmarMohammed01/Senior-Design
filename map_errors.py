@@ -6,6 +6,12 @@ Contains:
 - def get_YOLO_label(golden_board_components_file)
 - def get_YOLO_classes(golden_board_classes_file)
 """
+
+'''NEED:
+- Check if YOLO Label file exists before mapping the labels
+- Detect labeled regions with the most differences (the most orange)
+'''
+
 import cv2 as cv
 
 class YOLOLabel:
@@ -105,5 +111,5 @@ def get_YOLO_classes(golden_board_classes_file):
     except FileNotFoundError:
         print(f"Error: The file '{golden_board_classes_file}' was not found")
 
-map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
+# map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 

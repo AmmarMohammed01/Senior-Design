@@ -3,8 +3,13 @@
 .DS_Store
 dev.txt
 .python3.9venv
+__pycache__
+
+boards
 
 images/Board1.png
 images/Board2.png
 images/SSIM*
 labeled\ images
+
+progress_images

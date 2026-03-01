@@ -98,4 +98,4 @@ def compare_boards(img1_file, img2_file):
     if cv.waitKey(0) == ord('q'):
         cv.destroyAllWindows()
 
-compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")
+# compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")

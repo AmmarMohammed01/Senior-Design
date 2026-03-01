@@ -5,6 +5,7 @@ import numpy as np
 # Our own .py files
 from image_comparison import compare_boards
 from take_image import take_golden_board_image, take_test_board_image
+from map_errors import map_errors
 
 def main():
     """The program routine"""
@@ -22,7 +23,8 @@ def main():
 
     # print("What type of test board is being used")
     take_test_board_image(board_type)
-    compare_boards()
+    # compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")
 
 # Run program here
 main()
+

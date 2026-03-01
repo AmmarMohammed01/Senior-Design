@@ -2,7 +2,7 @@ capacitor
 potentiometer
 LM2596 IC
 inductor
-shottky diode
+schottky diode
 small resistor/capacitor
 input terminal
 output terminal
