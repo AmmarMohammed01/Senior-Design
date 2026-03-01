@@ -4,10 +4,11 @@ import shutil
 def menu():
     print("PCB QUALITY CHECKER")
     print("1. Add new board type")
-    print("2. Label existing board type")
-    print("3. Add test board images")
-    print("4. View existing board types")
-    print("5. Remove board type")
+    print("2. Remove board type")
+    print("3. Capture golden board image")
+    print("4. Capture test board images")
+    print("5. Label existing board type")
+    print("6. View existing board types")
     print("q. Quit\n")
 
     menu_option = input("Type option number here: ")
@@ -16,13 +17,15 @@ def menu():
     if menu_option == '1':
         add_board_type()
     elif menu_option == '2':
-        label_board_type()
-    elif menu_option == '3':
-        add_test_board_images()
-    elif menu_option == '4':
-        view_board_types()
-    elif menu_option == '5':
         remove_board_type()
+    elif menu_option == '3':
+        capture_golden_board_image()
+    elif menu_option == '4':
+        capture_test_board_images()
+    elif menu_option == '5':
+        label_board_type()
+    elif menu_option == '6':
+        view_board_types()
     elif menu_option == 'q' or menu_option == 'Q':
         print("Closing program...")
         quit()
@@ -68,14 +71,23 @@ def remove_board_type():
         print(f"Invalid option: '{confirm_option}'.")
         menu_return()
 
-def label_board_type():
-    print()
+def capture_golden_board_image():
+    print("CAPTURE GOLDEN BOARD IMAGE")
+    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    board_type = input("Select board type: ")
 
-def add_test_board_images():
-    print()
+def capture_test_board_images():
+    print("CAPTURE TEST BOARD IMAGES")
+    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    board_type = input("Select board type: ")
+
+def label_board_type():
+    print("LABEL EXISTING BOARD TYPE")
+    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    board_type = input("Select board type: ")
 
 def view_board_types():
-    print()
+    print("VIEW BOARD TYPES & BOARD INFO")
 
 def menu_return():
     print("Returning to menu...\n")
