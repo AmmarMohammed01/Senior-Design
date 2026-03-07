@@ -6,6 +6,7 @@ Contains:
 - def get_YOLO_label(golden_board_components_file)
 - def get_YOLO_classes(golden_board_classes_file)
 - def detect_possible_defect(img, x1, y1, x2, y2) 
+- def suggest_defect_type()
 """
 
 '''NEED:
@@ -160,6 +161,34 @@ def detect_possible_defect(img, x1, y1, x2, y2):
         return True # defect
     else:
         return False # good
+
+def suggest_defect_type(region_name):
+    """Given a labeled region's/component's name
+    Return potential defects associated with component"""
+
+    '''
+    Defects discussed 10/21/2025
+
+    What we're looking to detect in the PCB:
+    Misalignment - Wrong Installation
+    Missing Component
+    Wrong Component
+    Solder Bridge
+    Missing Solder
+    Bad Solder Joint
+    Broken Trace
+    '''
+
+    defect_types = {
+        "resistor": ['misalligned', 'missing'],
+        "diode": ['misalligned', 'missing', 'part orientation'],
+        "capacitor": ['misalligned', 'missing', 'part orientation'],
+        "inductor": ['misalligned', 'missing'],
+        "smd": ['misalligned', 'missing', 'part orientation', 'solder bridge'],
+        "trace": ['broken', 'solder bridge']
+    }
+
+    return defect_types[region_name]
 
 map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 
