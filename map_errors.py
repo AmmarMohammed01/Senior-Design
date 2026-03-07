@@ -14,6 +14,7 @@ Contains:
 '''
 
 import cv2 as cv
+import numpy as np
 
 class YOLOLabel:
     """YOLOLabel stores labels from the YOLO format
@@ -85,6 +86,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
             cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
+            detect_possible_defect(heatmap_img, x1, y1, x2, y2)
 
         cv.imshow('heatmap', heatmap_img)
         if cv.waitKey(0) == ord('q'):
@@ -130,13 +132,33 @@ def detect_possible_defect(img, x1, y1, x2, y2):
     """
 
     '''Read Image & Get ROI'''
-    img = cv.imread('image.jpg')
+    # img = cv.imread('image.jpg')
+    assert img is not None, "Error: Image not found or could not be read"
     roi = img[y1:y2, x1:x2]
 
     '''Find orange value in ROI'''
+    lower_orange = np.array([0, 100, 100])
+    upper_orange = np.array([20, 255, 255])
+
+    hsv_roi = cv.cvtColor(roi, cv.COLOR_BGR2HSV)
+    mask = cv.inRange(hsv_roi, lower_orange, upper_orange)
+
+    result = cv.bitwise_and(hsv_roi, hsv_roi, mask=mask)
+    # cv.imshow('roi', roi)
+    cv.imshow('orange in roi', result)
+
+    result = cv.cvtColor(result, cv.COLOR_HSV2BGR) # without this, display is yellow, doesn't affect mask summation just imshow
+    combined_image = cv.hconcat([roi, result])
+    cv.imshow('comparison', combined_image)
+
+    if cv.waitKey(0) == ord('q'):
+        cv.destroyAllWindows()
 
     '''If found return defect, else return good'''
+    if np.sum(mask) > 0:
+        return True # defect
+    else:
+        return False # good
 
-
-# map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
+map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 
