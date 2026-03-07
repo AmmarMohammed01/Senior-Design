@@ -86,7 +86,8 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
             cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
-            detect_possible_defect(heatmap_img, x1, y1, x2, y2)
+            has_possible_defect = "potential defect" if detect_possible_defect(heatmap_img, x1, y1, x2, y2) == True else "good"
+            print(f"{current_label.label_name}: {has_possible_defect}")
 
         cv.imshow('heatmap', heatmap_img)
         if cv.waitKey(0) == ord('q'):
@@ -145,7 +146,7 @@ def detect_possible_defect(img, x1, y1, x2, y2):
 
     result = cv.bitwise_and(hsv_roi, hsv_roi, mask=mask)
     # cv.imshow('roi', roi)
-    cv.imshow('orange in roi', result)
+    # cv.imshow('orange in roi', result)
 
     result = cv.cvtColor(result, cv.COLOR_HSV2BGR) # without this, display is yellow, doesn't affect mask summation just imshow
     combined_image = cv.hconcat([roi, result])
