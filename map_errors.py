@@ -5,6 +5,7 @@ Contains:
 - def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file)
 - def get_YOLO_label(golden_board_components_file)
 - def get_YOLO_classes(golden_board_classes_file)
+- def detect_possible_defect(img, x1, y1, x2, y2) 
 """
 
 '''NEED:
@@ -52,6 +53,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
 
     Draw the labels on the heatmap image"""
 
+    '''Import heatmap image and get dimensions'''
     heatmap_img = cv.imread(heatmap_img_file) #numpy.ndarray
     height = 0
     width = 0
@@ -63,10 +65,11 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
         print("Heatmap Image not found")
         exit()
 
+    '''Get the labels coordinates and names from text files and store as list'''
     golden_board_component_points = get_YOLO_label(golden_board_components_file)
     golden_board_componennt_names = get_YOLO_classes(golden_board_classes_file)
 
-    # Plot labels onto board heatmap
+    '''Plot labels onto board heatmap'''
     if golden_board_component_points and golden_board_componennt_names:
         # print(golden_board_component_points)
 
@@ -88,7 +91,9 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             cv.destroyAllWindows()
 
 def get_YOLO_label(golden_board_components_file):
-    """Get the YOLO label coordinates"""
+    """Get the YOLO label coordinates
+    Given .txt file
+    Returns a list"""
     try:
         golden_board_component_points = []
         with open(golden_board_components_file) as f:
@@ -100,7 +105,9 @@ def get_YOLO_label(golden_board_components_file):
         print(f"Error: The file '{golden_board_components_file}' was not found")
 
 def get_YOLO_classes(golden_board_classes_file):
-    """Get the YOLO label class names"""
+    """Get the YOLO label class names
+    Given .txt file
+    Returns a list"""
     try:
         golden_board_componennt_names = []
         with open(golden_board_classes_file) as f:
@@ -110,6 +117,26 @@ def get_YOLO_classes(golden_board_classes_file):
 
     except FileNotFoundError:
         print(f"Error: The file '{golden_board_classes_file}' was not found")
+
+def detect_possible_defect(img, x1, y1, x2, y2):
+    """
+    Look at the ROI for a given component/label, see if orange color above certain threshold is detected, mark region as defect/good.
+    Given ROI (Region of Image)
+        - x1: top left x
+        - y1: top left y
+        - x2: bottom right x
+        - y2: bottom right y
+    Return Possible Defect Exists  = True or False
+    """
+
+    '''Read Image & Get ROI'''
+    img = cv.imread('image.jpg')
+    roi = img[y1:y2, x1:x2]
+
+    '''Find orange value in ROI'''
+
+    '''If found return defect, else return good'''
+
 
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 
