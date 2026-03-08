@@ -7,10 +7,15 @@ remove_board_type():
 - SHOW A LIST OF BOARDS TO REMOVE
     - MAYBE SHOW # OF CONTENTS INSIDE BEFORE DELETING
 
+capture_golden_board_image():
+- Should there be multiple golden boards?
 
 """
 import os
 import shutil
+
+# Our own .py files
+from take_image import take_golden_board_image, take_test_board_image
 
 def menu():
     print("PCB QUALITY CHECKER")
@@ -36,7 +41,7 @@ def menu():
     elif menu_option == '5':
         label_board_type()
     elif menu_option == '6':
-        view_board_types()
+        view_board_types_option()
     elif menu_option == 'q' or menu_option == 'Q':
         print("Closing program...")
         quit()
@@ -63,6 +68,9 @@ def remove_board_type():
     print("REMOVE BOARD TYPE")
     print("CAUTION: Removing a board type will remove all related data!")
     print("If you need to backup the data, go to the 'boards/' folder and save the board elsewhere\n")
+
+    view_board_types()
+
     remove_board_name = input("Type name of board to delete: ")
 
     confirm_option = input(f"Are you sure you want to remove board '{remove_board_name}'? Type y or n: ")
@@ -87,17 +95,44 @@ def remove_board_type():
 
 def capture_golden_board_image():
     print("CAPTURE GOLDEN BOARD IMAGE")
-    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    view_board_types()
+
     board_type = input("Select board type: ")
+
+    golden_board_path = "./boards/" + board_type
+
+    # Check if board type exists, else return to menu
+    if os.path.exists(golden_board_path):
+        print(f"Board type '{board_type}' was found.")
+        # take_golden_board_image(golden_board_path)
+        print(__file__)
+
+        # should get board file path to prepend to golden board name
+        # should see if golden board image exists?
+        # should we have multiple golden boards?
+    else:
+        print(f"ERROR: The board '{board_type}' was not found!")
+        menu_return()
+
 
 def capture_test_board_images():
     print("CAPTURE TEST BOARD IMAGES")
-    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    view_board_types()
+
     board_type = input("Select board type: ")
+
+    # Check if board type exists, else return to menu
+    if os.path.exists(f"./boards/{board_type}"):
+        print(f"Board type '{board_type}' was found.")
+        # should get board file path to prepend to golden board name
+    else:
+        print(f"ERROR: The board '{board_type}' was not found!")
+        menu_return()
 
 def label_board_type():
     print("LABEL EXISTING BOARD TYPE")
-    # SHOULD PRINT LIST OF EXISITING BOARDS HERE, database or just list of folders?
+    view_board_types()
+
     board_type = input("Select board type: ")
 
 def view_board_types():
@@ -107,6 +142,10 @@ def view_board_types():
     for board in boards_list:
         print(board)
 
+    print()
+
+def view_board_types_option():
+    view_board_types()
     menu_return()
 
 def menu_return():

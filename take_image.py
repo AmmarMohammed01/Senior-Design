@@ -11,7 +11,7 @@ TODO: FIX ROI variable, before dividing the code in functions I used the roi fro
 
 import cv2 as cv
 
-def take_golden_board_image(board_name):
+def take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
     capture = cv.VideoCapture(0)
     if not capture.isOpened():
@@ -41,12 +41,12 @@ def take_golden_board_image(board_name):
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    golden_board_file_name = board_name + "-golden.png"
+    golden_board_file_name = board_dir_path + "-golden.png"
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
     # MAYBE RETURN ROI for test board image, NEED TO STORE SINCE TAKING MULTIPLE TEST BOARD IMAGES
 
-def take_test_board_image(board_name):
+def take_test_board_image(board_dir_path):
     """Take image of TEST board"""
 
     capture = cv.VideoCapture(0)
@@ -74,7 +74,7 @@ def take_test_board_image(board_name):
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
     # Save and display cropped image
-    test_board_file_name = board_name + "-test.png"
+    test_board_file_name = board_dir_path + "-test.png"
     cv.imwrite(test_board_file_name, cropped_img)
 
     # When everything done, release the capture
