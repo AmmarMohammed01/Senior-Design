@@ -48,12 +48,16 @@ class YOLOLabel:
     def print_label(self):
         print(f"YOLOLabel contents: {self.label_name}, {self.label_x}, {self.label_y}, {self.label_width}, {self.label_height}")
 
-def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file):
+def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file, golden_board_img_file):
     """Given:
     1. the heatmap of differences between golden and test boards,
     2. the labeled components of the golden board.
 
     Draw the labels on the heatmap image"""
+
+    golden_board_img = cv.imread(golden_board_img_file)
+    assert golden_board_img is not None, "Error: Golden board image not found."
+    overlay = golden_board_img.copy()
 
     '''Import heatmap image and get dimensions'''
     heatmap_img = cv.imread(heatmap_img_file) #numpy.ndarray
@@ -87,10 +91,17 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
             cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
-            has_possible_defect = "potential defect" if detect_possible_defect(heatmap_img, x1, y1, x2, y2) == True else "good"
-            print(f"{current_label.label_name}: {has_possible_defect}")
+            has_possible_defect = detect_possible_defect(heatmap_img, x1, y1, x2, y2)
+            has_possible_defect_str = "potential defect" if has_possible_defect == True else "good"
+            print(f"{current_label.label_name}: {has_possible_defect_str}")
+
+            if has_possible_defect:
+                cv.rectangle(overlay, (x1, y1), (x2, y2), (0,0,255), -1)
+                overlay = cv.addWeighted(overlay, 0.8, golden_board_img, 1 - 0.8, 0)
+
 
         cv.imshow('heatmap', heatmap_img)
+        cv.imshow('golden_board', overlay)
         if cv.waitKey(0) == ord('q'):
             cv.destroyAllWindows()
 
@@ -190,5 +201,5 @@ def suggest_defect_type(region_name):
 
     return defect_types[region_name]
 
-map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
-
+# map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
+map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')
