@@ -202,4 +202,4 @@ def suggest_defect_type(region_name):
     return defect_types[region_name]
 
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
-map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')
+# map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')

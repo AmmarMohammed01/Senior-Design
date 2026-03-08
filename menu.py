@@ -1,3 +1,14 @@
+"""
+DEV:
+add_board_type():
+- ADD OPTION TO ESCAPE BOARD CREATION PROCESS
+
+remove_board_type():
+- SHOW A LIST OF BOARDS TO REMOVE
+    - MAYBE SHOW # OF CONTENTS INSIDE BEFORE DELETING
+
+
+"""
 import os
 import shutil
 
@@ -29,6 +40,9 @@ def menu():
     elif menu_option == 'q' or menu_option == 'Q':
         print("Closing program...")
         quit()
+    else:
+        print("Invalid option, try again...")
+        menu_return()
 
 def add_board_type():
     print("ADD NEW BOARD TYPE")
@@ -89,8 +103,14 @@ def label_board_type():
 def view_board_types():
     print("VIEW BOARD TYPES & BOARD INFO")
 
+    boards_list = [board for board in os.listdir("./boards/") if os.path.isdir('./boards/' + board)]
+    for board in boards_list:
+        print(board)
+
+    menu_return()
+
 def menu_return():
     print("Returning to menu...\n")
     menu()
 
-menu()
+# menu()
