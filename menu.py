@@ -11,7 +11,6 @@ capture_golden_board_image():
 - Should there be multiple golden boards?
 
 """
-import os
 from pathlib import Path
 import shutil
 
@@ -59,7 +58,6 @@ def add_board_type():
     print(f"Creating: '{new_board_name}'")
 
     try:
-        # os.makedirs(f"./boards/{new_board_name}")
         new_board_dir = BOARDS_DIR / new_board_name
         new_board_dir.mkdir(parents=True, exist_ok=False)
 
@@ -85,9 +83,7 @@ def remove_board_type():
         print(f"Removing board: {remove_board_name}")
         remove_board_dir = BOARDS_DIR / remove_board_name
         try:
-            # if os.path.exists(f"./boards/{remove_board_name}"):
             if remove_board_dir.exists():
-                # shutil.rmtree(f"./boards/{remove_board_name}")
                 shutil.rmtree(remove_board_dir)
                 print(f"Folder for '{remove_board_name}' has been deleted!")
                 menu_return()
@@ -108,18 +104,12 @@ def capture_golden_board_image():
     view_board_types()
 
     board_type = input("Select board type: ")
-
-    # golden_board_path = "./boards/" + board_type
     selected_board_dir = BOARDS_DIR / board_type
 
     # Check if board type exists, else return to menu
-    # if os.path.exists(golden_board_path):
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
-        # take_golden_board_image(golden_board_path)
-        # print(__file__)
 
-        # should get board file path to prepend to golden board name
         # should see if golden board image exists?
         # should we have multiple golden boards?
         take_golden_board_image(selected_board_dir)
@@ -138,10 +128,9 @@ def capture_test_board_images():
     selected_board_dir = BOARDS_DIR / board_type
 
     # Check if board type exists, else return to menu
-    # if os.path.exists(f"./boards/{board_type}"):
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
-        # should get board file path to prepend to golden board name
+        take_test_board_image(selected_board_dir)
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()
@@ -155,11 +144,8 @@ def label_board_type():
 def view_board_types():
     print("VIEW BOARD TYPES & BOARD INFO")
 
-    # boards_list = [board for board in os.listdir("./boards/") if os.path.isdir('./boards/' + board)]
     boards_list = [board for board in BOARDS_DIR.iterdir() if board.is_dir()]
     for board in boards_list:
-        # print(type(board))
-        # print(board) # prints full path
         print(board.name) # prints only "basename" <-- board folder name
 
     print()
@@ -172,4 +158,3 @@ def menu_return():
     print("Returning to menu...\n")
     menu()
 
-# menu()

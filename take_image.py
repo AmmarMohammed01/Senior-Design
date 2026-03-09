@@ -10,6 +10,7 @@ TODO: FIX ROI variable, before dividing the code in functions I used the roi fro
 '''
 
 import cv2 as cv
+import json
 
 def take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
@@ -40,6 +41,12 @@ def take_golden_board_image(board_dir_path):
     # Let user select ROI (drag a box)
     roi = cv.selectROI("Select ROI", frame, False) # tuple: (x,y, width, height)
 
+    # Save ROI to be used for test board capture (roi.json) file
+    board_roi_file = board_dir_path / "roi.json"
+    with open(board_roi_file, "w") as f:
+        json.dump(roi, f)
+
+
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
@@ -52,12 +59,14 @@ def take_golden_board_image(board_dir_path):
 def take_test_board_image(board_dir_path):
     """Take image of TEST board"""
 
+    '''Open Camera'''
     capture = cv.VideoCapture(0)
-
     if not capture.isOpened():
         print("Cannot open camera")
         exit()
 
+    roi = (0,0,0,0)
+    '''Allow user to capture image by pressing q'''
     while True:
         # Capture frame-by-frame
         ret, frame = capture.read()
@@ -66,6 +75,11 @@ def take_test_board_image(board_dir_path):
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
             break
+
+        # load roi data used with golden board
+        board_roi_file = board_dir_path / "roi.json"
+        with open(board_roi_file, "r") as f:
+            roi = json.load(f)
 
         cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
 
@@ -77,7 +91,7 @@ def take_test_board_image(board_dir_path):
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
     # Save and display cropped image
-    test_board_file_name = board_dir_path + "-test.png"
+    test_board_file_name = board_dir_path / "test.png"
     cv.imwrite(test_board_file_name, cropped_img)
 
     # When everything done, release the capture
