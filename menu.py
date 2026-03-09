@@ -4,12 +4,13 @@ add_board_type():
 - ADD OPTION TO ESCAPE BOARD CREATION PROCESS
 
 remove_board_type():
-- SHOW A LIST OF BOARDS TO REMOVE
-    - MAYBE SHOW # OF CONTENTS INSIDE BEFORE DELETING
+- MAYBE SHOW # OF CONTENTS INSIDE BEFORE DELETING
 
 capture_golden_board_image():
 - Should there be multiple golden boards?
 
+capture_test_board_images():
+- CHECK IF GOLDEN BOARD IMAGE EXISTS!!!
 """
 from pathlib import Path
 import shutil
@@ -113,7 +114,8 @@ def capture_golden_board_image():
         # should see if golden board image exists?
         # should we have multiple golden boards?
         take_golden_board_image(selected_board_dir)
-        print("Image captured!")
+        print("Golden board image captured!")
+        menu_return()
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()
@@ -131,6 +133,8 @@ def capture_test_board_images():
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
         take_test_board_image(selected_board_dir)
+        print("Test board image captured!")
+        menu_return()
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()

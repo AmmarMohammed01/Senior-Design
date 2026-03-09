@@ -11,6 +11,7 @@ TODO: FIX ROI variable, before dividing the code in functions I used the roi fro
 
 import cv2 as cv
 import json
+from pathlib import Path
 
 def take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
@@ -30,16 +31,21 @@ def take_golden_board_image(board_dir_path):
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        cv.imshow('frame', frame)
+        cv.imshow('Capture Golden Board Image', frame)
         if cv.waitKey(1) == ord('q'):
+            # When everything done, release the capture
+            capture.release()
+            cv.destroyAllWindows()
+            for i in range(4):
+                cv.waitKey(1)
             break
 
-    # When everything done, release the capture
-    capture.release()
-    cv.destroyAllWindows()
 
     # Let user select ROI (drag a box)
     roi = cv.selectROI("Select ROI", frame, False) # tuple: (x,y, width, height)
+    cv.destroyWindow("Select ROI")
+    for i in range(4):
+        cv.waitKey(1)
 
     # Save ROI to be used for test board capture (roi.json) file
     board_roi_file = board_dir_path / "roi.json"
@@ -83,17 +89,43 @@ def take_test_board_image(board_dir_path):
 
         cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
 
-        cv.imshow('frame', frame)
+        cv.imshow('Capture Test Board Image', frame)
         if cv.waitKey(1) == ord('q'):
+            # When everything done, release the capture
+            capture.release()
+            cv.destroyAllWindows()
+            cv.waitKey(1)
             break
 
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    # Save and display cropped image
-    test_board_file_name = board_dir_path / "test.png"
-    cv.imwrite(test_board_file_name, cropped_img)
+    # Determine which # test board is this (test001, test002, test003...)
+    '''
+    If doesn't exist, create the file to start tracking.
+    name the first file, store the number 2 in the tracker file.
 
-    # When everything done, release the capture
-    capture.release()
-    cv.destroyAllWindows()
+    If it does exist, import the number.
+    Name the file using number. Store number + 1.
+    '''
+    next_test_num = 1
+    next_test_num_filepath = board_dir_path / "next-test-img-num.json"
+
+    test_board_file_name = "test"
+
+    if next_test_num_filepath.exists():
+        with open(next_test_num_filepath, "r") as f:
+            next_test_num = json.load(f)
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+        with open(next_test_num_filepath, "w") as f:
+            json.dump((next_test_num + 1), f)
+    else:
+        with open(next_test_num_filepath, "w") as f:
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+            json.dump((next_test_num + 1), f)
+
+    # Save and display cropped image
+    test_board_filepath = board_dir_path / test_board_file_name
+    cv.imwrite(test_board_filepath, cropped_img)
+
+
