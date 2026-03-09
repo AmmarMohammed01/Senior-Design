@@ -12,10 +12,14 @@ capture_golden_board_image():
 
 """
 import os
+from pathlib import Path
 import shutil
 
 # Our own .py files
 from take_image import take_golden_board_image, take_test_board_image
+
+SCRIPT_DIR = Path(__file__).parent.resolve()
+BOARDS_DIR = SCRIPT_DIR / "boards"
 
 def menu():
     print("PCB QUALITY CHECKER")
@@ -55,12 +59,15 @@ def add_board_type():
     print(f"Creating: '{new_board_name}'")
 
     try:
-        os.makedirs(f"./boards/{new_board_name}")
+        # os.makedirs(f"./boards/{new_board_name}")
+        new_board_dir = BOARDS_DIR / new_board_name
+        new_board_dir.mkdir(parents=True, exist_ok=False)
+
         print(f"Board '{new_board_name}' successfully added")
         menu_return()
 
-    except FileExistsError:
-        print("That board name is already in use!")
+    except FileExistsError: # same as errno 17
+        print("ERROR: That board name is already in use!")
         print("Please try again and select a different board name")
         menu_return()
 
@@ -76,9 +83,12 @@ def remove_board_type():
     confirm_option = input(f"Are you sure you want to remove board '{remove_board_name}'? Type y or n: ")
     if confirm_option == 'y' or confirm_option == 'Y':
         print(f"Removing board: {remove_board_name}")
+        remove_board_dir = BOARDS_DIR / remove_board_name
         try:
-            if os.path.exists(f"./boards/{remove_board_name}"):
-                shutil.rmtree(f"./boards/{remove_board_name}")
+            # if os.path.exists(f"./boards/{remove_board_name}"):
+            if remove_board_dir.exists():
+                # shutil.rmtree(f"./boards/{remove_board_name}")
+                shutil.rmtree(remove_board_dir)
                 print(f"Folder for '{remove_board_name}' has been deleted!")
                 menu_return()
             else:
@@ -99,17 +109,21 @@ def capture_golden_board_image():
 
     board_type = input("Select board type: ")
 
-    golden_board_path = "./boards/" + board_type
+    # golden_board_path = "./boards/" + board_type
+    selected_board_dir = BOARDS_DIR / board_type
 
     # Check if board type exists, else return to menu
-    if os.path.exists(golden_board_path):
+    # if os.path.exists(golden_board_path):
+    if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
         # take_golden_board_image(golden_board_path)
-        print(__file__)
+        # print(__file__)
 
         # should get board file path to prepend to golden board name
         # should see if golden board image exists?
         # should we have multiple golden boards?
+        take_golden_board_image(selected_board_dir)
+        print("Image captured!")
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()
@@ -121,8 +135,11 @@ def capture_test_board_images():
 
     board_type = input("Select board type: ")
 
+    selected_board_dir = BOARDS_DIR / board_type
+
     # Check if board type exists, else return to menu
-    if os.path.exists(f"./boards/{board_type}"):
+    # if os.path.exists(f"./boards/{board_type}"):
+    if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
         # should get board file path to prepend to golden board name
     else:
@@ -138,9 +155,12 @@ def label_board_type():
 def view_board_types():
     print("VIEW BOARD TYPES & BOARD INFO")
 
-    boards_list = [board for board in os.listdir("./boards/") if os.path.isdir('./boards/' + board)]
+    # boards_list = [board for board in os.listdir("./boards/") if os.path.isdir('./boards/' + board)]
+    boards_list = [board for board in BOARDS_DIR.iterdir() if board.is_dir()]
     for board in boards_list:
-        print(board)
+        # print(type(board))
+        # print(board) # prints full path
+        print(board.name) # prints only "basename" <-- board folder name
 
     print()
 
