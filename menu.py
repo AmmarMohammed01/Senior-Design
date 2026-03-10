@@ -17,12 +17,16 @@ import shutil
 
 # Our own .py files
 from take_image import take_golden_board_image, take_test_board_image
+from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
+import camera_config
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
 
 def menu():
+    print(camera_config.camera_choice)
     print("PCB QUALITY CHECKER")
+    print("-------------------")
     print("1. Add new board type")
     print("2. Remove board type")
     print("3. Capture golden board image")
@@ -55,6 +59,7 @@ def menu():
 
 def add_board_type():
     print("ADD NEW BOARD TYPE")
+    print("------------------")
     new_board_name = input("Name of board: ")
     print(f"Creating: '{new_board_name}'")
 
@@ -72,6 +77,7 @@ def add_board_type():
 
 def remove_board_type():
     print("REMOVE BOARD TYPE")
+    print("-----------------")
     print("CAUTION: Removing a board type will remove all related data!")
     print("If you need to backup the data, go to the 'boards/' folder and save the board elsewhere\n")
 
@@ -102,6 +108,7 @@ def remove_board_type():
 
 def capture_golden_board_image():
     print("CAPTURE GOLDEN BOARD IMAGE")
+    print("--------------------------")
     view_board_types()
 
     board_type = input("Select board type: ")
@@ -113,7 +120,11 @@ def capture_golden_board_image():
 
         # should see if golden board image exists?
         # should we have multiple golden boards?
-        take_golden_board_image(selected_board_dir)
+        if camera_config.camera_choice == "usb":
+            take_golden_board_image(selected_board_dir)
+        elif camera_config.camera_choice == "picam":
+            picam_take_golden_board_image(selected_board_dir)
+
         print("Golden board image captured!")
         menu_return()
     else:
@@ -123,6 +134,7 @@ def capture_golden_board_image():
 
 def capture_test_board_images():
     print("CAPTURE TEST BOARD IMAGES")
+    print("-------------------------")
     view_board_types()
 
     board_type = input("Select board type: ")
@@ -132,7 +144,12 @@ def capture_test_board_images():
     # Check if board type exists, else return to menu
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
-        take_test_board_image(selected_board_dir)
+
+        if camera_config.camera_choice == "usb":
+            take_test_board_image(selected_board_dir)
+        elif camera_config.camera_choice == "picam":
+            picam_take_test_board_image(selected_board_dir)
+
         print("Test board image captured!")
         menu_return()
     else:
@@ -147,6 +164,7 @@ def label_board_type():
 
 def view_board_types():
     print("VIEW BOARD TYPES & BOARD INFO")
+    print("-----------------------------")
 
     boards_list = [board for board in BOARDS_DIR.iterdir() if board.is_dir()]
     for board in boards_list:

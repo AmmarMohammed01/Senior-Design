@@ -1,44 +1,55 @@
 """
-FILE: take_image.py
+FILE: take_image_picam.py
 Contains two functions:
 - take_golden_board_image(board_name)
 - take_test_board_image(board_name)
+
+NOTES: For picamera, do sudo apt install python3-picamera2. <-- this is good for pre-installed libcamera compatibility
+How to connect picam ribbon-cable on Pi 5:
+- shiny connector pins
+    - towards usb/ethernet ports
+    - towards yellow side of port
+- black tape side
+    - towards black/gray pull tab of port
 """
 
+#take_image imports
 import cv2 as cv
 import json
 from pathlib import Path
 
-def take_golden_board_image(board_dir_path):
+#picam imports
+from picamera2 import Picamera2
+from libcamera import controls
+import numpy as np
+
+height = 2592 #480
+width = 4608 # 640
+cam = Picamera2()
+cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
+cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+# cam.start()
+
+def picam_take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
-    '''Open Camera'''
-    capture = cv.VideoCapture(0)
-    if not capture.isOpened():
-        print("Cannot open camera")
-        exit()
+    """Open PiCamera"""
+    cam.start()
+    final_frame = np.array([])
 
-    '''Allow user to capture image by pressing q'''
     while True:
-        # Capture frame-by-frame
-        ret, frame = capture.read()
-
-        # if frame is read correctly ret is True
-        if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
-            break
-
+        frame = cam.capture_array()
         cv.imshow('Capture Golden Board Image', frame)
-        if cv.waitKey(1) == ord('q'):
-            # When everything done, release the capture
-            capture.release()
-            cv.destroyAllWindows()
-            for i in range(4):
-                cv.waitKey(1)
-            break
+        key = cv.waitKey(1) &0xFF # &0xFF means only the last 8 bits
 
+        if key == ord('q'):
+            final_frame = frame
+            cam.close()
+            cv.destroyAllWindows()
+            cv.waitKey(1)
+            break
 
     # Let user select ROI (drag a box)
-    roi = cv.selectROI("Select ROI", frame, False) # tuple: (x,y, width, height)
+    roi = cv.selectROI("Select ROI", final_frame, False) # tuple: (x,y, width, height)
     cv.destroyWindow("Select ROI")
     for i in range(4):
         cv.waitKey(1)
@@ -48,52 +59,44 @@ def take_golden_board_image(board_dir_path):
     with open(board_roi_file, "w") as f:
         json.dump(roi, f)
 
-
     # Extract cropped region
-    cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+    cropped_img = final_frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
     golden_board_file_name = board_dir_path / "golden.png"
     print(golden_board_file_name)
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
 
-def take_test_board_image(board_dir_path):
+def picam_take_test_board_image(board_dir_path):
     """Take image of TEST board"""
 
     roi = (0,0,0,0)
+
     # load roi data used with golden board
     board_roi_file = board_dir_path / "roi.json"
     with open(board_roi_file, "r") as f:
         roi = json.load(f)
 
-    '''Open Camera'''
-    capture = cv.VideoCapture(0)
-    if not capture.isOpened():
-        print("Cannot open camera")
-        exit()
+    """Open PiCamera"""
+    cam.start()
+    final_frame = np.array([])
 
     '''Allow user to capture image by pressing q'''
     while True:
-        # Capture frame-by-frame
-        ret, frame = capture.read()
-
-        # if frame is read correctly ret is True
-        if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
-            break
-
+        frame = cam.capture_array()
         cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
-
         cv.imshow('Capture Test Board Image', frame)
-        if cv.waitKey(1) == ord('q'):
-            # When everything done, release the capture
-            capture.release()
+        key = cv.waitKey(1) &0xFF # &0xFF means only the last 8 bits
+
+        if key == ord('q'):
+            final_frame = frame
+            cam.close()
             cv.destroyAllWindows()
             cv.waitKey(1)
             break
 
     # Extract cropped region
-    cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+    cropped_img = final_frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
     # Determine which # test board is this (test001, test002, test003...)
     '''
@@ -122,5 +125,4 @@ def take_test_board_image(board_dir_path):
     # Save and display cropped image
     test_board_filepath = board_dir_path / test_board_file_name
     cv.imwrite(test_board_filepath, cropped_img)
-
 

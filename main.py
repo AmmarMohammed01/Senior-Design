@@ -7,9 +7,15 @@ from image_comparison import compare_boards
 # from take_image import take_golden_board_image, take_test_board_image
 from map_errors import map_errors
 from menu import menu
+import camera_config
 
 def main():
     """The program routine"""
+
+    print(f"Current Choice: {camera_config.camera_choice}")
+    camera_config.camera_choice = input("Which camera are you using (usb or picam): ")
+    print(f"You chose: {camera_config.camera_choice}")
+    print()
 
     '''
     GUI over here:
