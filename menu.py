@@ -18,13 +18,13 @@ import shutil
 # Our own .py files
 from take_image import take_golden_board_image, take_test_board_image
 from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
-import camera_config
+import select_camera
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
 
 def menu():
-    print(camera_config.camera_choice)
+    print(select_camera.camera_choice)
     print("PCB QUALITY CHECKER")
     print("-------------------")
     print("1. Add new board type")
@@ -120,9 +120,9 @@ def capture_golden_board_image():
 
         # should see if golden board image exists?
         # should we have multiple golden boards?
-        if camera_config.camera_choice == "usb":
+        if select_camera.camera_choice == "usb":
             take_golden_board_image(selected_board_dir)
-        elif camera_config.camera_choice == "picam":
+        elif select_camera.camera_choice == "picam":
             picam_take_golden_board_image(selected_board_dir)
 
         print("Golden board image captured!")
@@ -145,9 +145,9 @@ def capture_test_board_images():
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
 
-        if camera_config.camera_choice == "usb":
+        if select_camera.camera_choice == "usb":
             take_test_board_image(selected_board_dir)
-        elif camera_config.camera_choice == "picam":
+        elif select_camera.camera_choice == "picam":
             picam_take_test_board_image(selected_board_dir)
 
         print("Test board image captured!")
