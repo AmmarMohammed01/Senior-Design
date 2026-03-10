@@ -52,7 +52,7 @@ def take_golden_board_image(board_dir_path):
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    golden_board_file_name = board_dir_path / "golden.png"
+    golden_board_file_name = board_dir_path / "golden.jpg"
     print(golden_board_file_name)
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
@@ -111,12 +111,12 @@ def take_test_board_image(board_dir_path):
     if next_test_num_filepath.exists():
         with open(next_test_num_filepath, "r") as f:
             next_test_num = json.load(f)
-            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
         with open(next_test_num_filepath, "w") as f:
             json.dump((next_test_num + 1), f)
     else:
         with open(next_test_num_filepath, "w") as f:
-            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image

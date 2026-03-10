@@ -5,6 +5,7 @@ Contains two functions:
 - take_test_board_image(board_name)
 
 NOTES: For picamera, do sudo apt install python3-picamera2. <-- this is good for pre-installed libcamera compatibility
+python3 -m venv --system-site-packages .venv
 How to connect picam ribbon-cable on Pi 5:
 - shiny connector pins
     - towards usb/ethernet ports
@@ -19,16 +20,21 @@ import json
 from pathlib import Path
 
 #picam imports
-from picamera2 import Picamera2
-from libcamera import controls
-import numpy as np
+try:
+    from picamera2 import Picamera2
+    from libcamera import controls
+    HAS_PICAMERA = True
 
-height = 2592 #480
-width = 4608 # 640
-cam = Picamera2()
-cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
-cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
-# cam.start()
+    height = 2592 #480
+    width = 4608 # 640
+    cam = Picamera2()
+    cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
+    cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+    # cam.start()
+except (ImportError, ModuleNotFoundError):
+    HAS_PICAMERA = False
+    print("Picamera not found. Please use USB webcam instead.")
+import numpy as np
 
 def picam_take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
@@ -62,7 +68,7 @@ def picam_take_golden_board_image(board_dir_path):
     # Extract cropped region
     cropped_img = final_frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    golden_board_file_name = board_dir_path / "golden.png"
+    golden_board_file_name = board_dir_path / "golden.jpg"
     print(golden_board_file_name)
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
@@ -114,12 +120,12 @@ def picam_take_test_board_image(board_dir_path):
     if next_test_num_filepath.exists():
         with open(next_test_num_filepath, "r") as f:
             next_test_num = json.load(f)
-            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
         with open(next_test_num_filepath, "w") as f:
             json.dump((next_test_num + 1), f)
     else:
         with open(next_test_num_filepath, "w") as f:
-            test_board_file_name = test_board_file_name + str(next_test_num) + ".png"
+            test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image
