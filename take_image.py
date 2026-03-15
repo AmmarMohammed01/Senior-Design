@@ -36,7 +36,7 @@ def take_golden_board_image(board_dir_path):
                 cv.waitKey(1)
             break
 
-
+    # DEV NOTE: LET USER KNOW THEY NEED TO DRAW A RECTANGLE AROUND GOLDEN BOARD LOCATION, this will be used to crop the image and to align with test board images.
     # Let user select ROI (drag a box)
     roi = cv.selectROI("Select ROI", frame, False) # tuple: (x,y, width, height)
     cv.destroyWindow("Select ROI")
@@ -47,7 +47,6 @@ def take_golden_board_image(board_dir_path):
     board_roi_file = board_dir_path / "roi.json"
     with open(board_roi_file, "w") as f:
         json.dump(roi, f)
-
 
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]

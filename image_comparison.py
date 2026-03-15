@@ -48,7 +48,14 @@ def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255):
     return ssim_index, ssim_map
 
 def compare_boards(img1_file, img2_file):
-    """Compare two boards"""
+    """Compare two boards using SSIM.
+    The output is an image showing the differences between the two images.
+    Parameters:
+    - img1_file, the golden board.
+    - img2_file, a test board of same board type as the golden board.
+
+    Return: Image showing regions that differ the most between the two input images.
+    """
     img1 = cv.imread(img1_file)
     img2 = cv.imread(img2_file)
 

@@ -37,7 +37,7 @@ class YOLOLabel:
         self.label_height = label_height
 
     def convert_to_label(self, label_coordinates, label_classes):
-        """Given a line from the YOLO coordinates YOLO classes files, convert to label object"""
+        """Given a line each from the YOLO coordinates & the YOLO classes files, convert to label object"""
         label_contents = label_coordinates.split()
         self.label_name = label_classes[ int(label_contents[0]) ]
         self.label_x = float(label_contents[1])
@@ -51,9 +51,16 @@ class YOLOLabel:
 def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file, golden_board_img_file):
     """Given:
     1. the heatmap of differences between golden and test boards,
-    2. the labeled components of the golden board.
+    2. the YOLO labels of the golden board's components,
+    3. the YOLO class names of the labels of the components,
+    4. the original golden board image
 
-    Draw the labels on the heatmap image"""
+    Draw the rectangle region labels on the heatmap image, representing the components.
+    See what rectangle regions have the highest differences detected
+    (meaning which regions have the highest orange color within a threshold)
+    and mark those regions as possibly defective.
+    Finally overlay the possibly defective regions over the original golden board image.
+    """
 
     golden_board_img = cv.imread(golden_board_img_file)
     assert golden_board_img is not None, "Error: Golden board image not found."
@@ -95,6 +102,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
             has_possible_defect_str = "potential defect" if has_possible_defect == True else "good"
             print(f"{current_label.label_name}: {has_possible_defect_str}")
 
+            '''Overlay the possibly defective regions onto the golden board image'''
             if has_possible_defect:
                 cv.rectangle(overlay, (x1, y1), (x2, y2), (0,0,255), -1)
                 overlay = cv.addWeighted(overlay, 0.8, golden_board_img, 1 - 0.8, 0)

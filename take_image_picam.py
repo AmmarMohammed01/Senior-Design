@@ -1,8 +1,8 @@
 """
 FILE: take_image_picam.py
 Contains two functions:
-- take_golden_board_image(board_name)
-- take_test_board_image(board_name)
+- picam_take_golden_board_image(board_name)
+- picam_take_test_board_image(board_name)
 
 NOTES: For picamera, do sudo apt install python3-picamera2. <-- this is good for pre-installed libcamera compatibility
 python3 -m venv --system-site-packages .venv
@@ -21,6 +21,7 @@ from pathlib import Path
 
 #picam imports
 try:
+    '''Import picamera only if the picamera library is installed on user's device'''
     from picamera2 import Picamera2
     from libcamera import controls
     HAS_PICAMERA = True

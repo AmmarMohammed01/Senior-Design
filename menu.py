@@ -1,5 +1,5 @@
 """
-DEV:
+DEV NOTES:
 add_board_type():
 - ADD OPTION TO ESCAPE BOARD CREATION PROCESS
 
@@ -12,6 +12,7 @@ capture_golden_board_image():
 capture_test_board_images():
 - CHECK IF GOLDEN BOARD IMAGE EXISTS!!!
 """
+# File management libraries
 from pathlib import Path
 import shutil
 
@@ -161,8 +162,12 @@ def label_board_type():
     view_board_types()
 
     board_type = input("Select board type: ")
+    # code goes here
 
 def view_board_types():
+    """This function is used in multiple menu options to give the user
+    a sense of what boards already exist in the file system before the
+    user removes, captures a golden or test board, or labels a board."""
     print("VIEW BOARD TYPES & BOARD INFO")
     print("-----------------------------")
 
@@ -173,6 +178,7 @@ def view_board_types():
     print()
 
 def view_board_types_option():
+    """This is the actual (standalone) menu option that allows the user to see the existing board types"""
     view_board_types()
     menu_return()
 
