@@ -20,6 +20,7 @@ import shutil
 from take_image import take_golden_board_image, take_test_board_image
 from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 import select_camera
+from launch_image_labeler import launch_image_labeler
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
@@ -159,10 +160,33 @@ def capture_test_board_images():
 
 def label_board_type():
     print("LABEL EXISTING BOARD TYPE")
+    print("-------------------------")
     view_board_types()
+    print("NOTE: When the program launches, the save format will show \"YOLO\" but is actually PascalVOC.")
+    print("NOTE continued: This will save labels as .xml.txt instead of .txt")
+    print("ACTION: User must re-toggle the save format until it lands on \"YOLO\" again.\n")
+
+    print("INSTRUCTIONS:")
+    print("After selecting a board type, labelImg program will open.")
+    print("This will be used to label golden board components.")
+    print("Click 'Create Rectangle Box' and drag and select the region around component of choice.")
+    print("Then give the rectangle region a name related to the component.")
+    print("Once finished labeling all the components, click save and the file should automatically be named \"golden.txt\"")
 
     board_type = input("Select board type: ")
-    # code goes here
+    selected_board_dir = BOARDS_DIR / board_type
+
+    # Check if board type exists, else return to menu
+    if selected_board_dir.exists():
+        golden_board_file = selected_board_dir / "golden.png"
+        print(f"Board type '{board_type}' was found.")
+        print(golden_board_file)
+        launch_image_labeler(golden_board_file)
+
+        menu_return()
+    else:
+        print(f"ERROR: The board '{board_type}' was not found!")
+        menu_return()
 
 def view_board_types():
     """This function is used in multiple menu options to give the user
