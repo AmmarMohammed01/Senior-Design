@@ -1,7 +1,3 @@
-# OpenCV Imports
-import cv2 as cv
-import numpy as np
-
 # Our own .py files
 from image_comparison import compare_boards
 from map_errors import map_errors
