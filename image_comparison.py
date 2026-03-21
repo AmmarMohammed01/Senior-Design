@@ -60,7 +60,8 @@ def compare_boards(img1_file, img2_file):
     - img1_file, the golden board.
     - img2_file, a test board of same board type as the golden board.
 
-    Return: Image showing regions that differ the most between the two input images.
+    Displays: Image showing regions that differ the most between the two input images.
+    Return: Currently none
     """
     img1 = cv.imread(img1_file)
     img2 = cv.imread(img2_file)

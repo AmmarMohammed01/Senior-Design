@@ -1,5 +1,4 @@
 # Our own .py files
-from image_comparison import compare_boards
 from map_errors import map_errors
 from menu import menu
 import select_camera
