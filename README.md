@@ -42,18 +42,48 @@ deactivate
 ```
 
 ## File Structure
+### Main Files in GitHub Repo
 ```text
 .
 ├── README.md
 ├── requirements.txt: required python libraries
-├── main.py: entry point of program
-├── menu.py: user interface and options
-├── select_camera.py: allow user to select usb or picam
-├── take_image.py: capture golden and test board images
-├── take_image_picam.py: capture golden and test board images with picamera
-├── launch_image_labeler.py: launches labelImg to allow user to label golden board
-├── image_comparison.py: compares golden board and test boards images
-└── map_errors.py: map regions onto golden board found to be different, determine which are likely errors, suggest possible error types
+├── main.py
+├── menu.py
+├── select_camera.py
+├── take_image.py
+├── take_image_picam.py
+├── launch_image_labeler.py
+├── image_comparison.py
+└── map_errors.py
+```
+
+### Python Program Descriptions
+```
+main.py:
+- entry point of program
+
+menu.py:
+- user interface and options
+
+select_camera.py:
+- allow user to select usb or picam
+
+take_image.py:
+- capture golden and test board images
+
+take_image_picam.py:
+- capture golden and test board images with picamera
+
+launch_image_labeler.py:
+- launches labelImg to allow user to label golden board
+
+image_comparison.py:
+- compares golden board and test boards images
+
+map_errors.py:
+- map regions onto golden board found to be different,
+- determine which are likely errors,
+- suggest possible error types
 ```
 
 ### Boards would appear in a folder like this
