@@ -151,13 +151,20 @@ def capture_test_board_images():
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
 
-        if select_camera.camera_choice == "usb":
-            take_test_board_image(selected_board_dir)
-        elif select_camera.camera_choice == "picam":
-            picam_take_test_board_image(selected_board_dir)
+        '''Check if golden board image exists, more specifically if roi coordinates of golden board exist''' 
+        roi_filepath = selected_board_dir / "roi.json"
 
-        print("Test board image captured!")
-        menu_return()
+        if roi_filepath.exists():
+            if select_camera.camera_choice == "usb":
+                take_test_board_image(selected_board_dir)
+                print("Test board image captured!")
+            elif select_camera.camera_choice == "picam":
+                picam_take_test_board_image(selected_board_dir)
+                print("Test board image captured!")
+            menu_return()
+        else:
+            print("ERROR: Golden board image not found") # Specifically ROI.json was not found
+            menu_return()
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()
