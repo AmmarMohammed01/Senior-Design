@@ -1,5 +1,11 @@
 """
 FILE: image_comparison.py
+
+PURPOSE:
+- Compare golden board and test board images,
+- create an image showing the differences thru SSIM,
+- Apply inferno filter to differences image
+
 Contains two functions:
 - ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255)
 - compare_boards()

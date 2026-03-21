@@ -1,7 +1,8 @@
 '''
 FILE: launch_image_labeler.py
-This file will be used to launch the labelImg application after being prompted in a menu option.
-This application will be used to allow user to label the golden board image.
+PURPOSE:
+- This file will be used to launch the labelImg application after being prompted in a menu option.
+- This application will be used to allow user to label the golden board image.
 '''
 
 '''DEV NOTE: Add a way to pass a golden board file name to open up the image file on launch'''

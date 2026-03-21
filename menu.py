@@ -21,6 +21,7 @@ from take_image import take_golden_board_image, take_test_board_image
 from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 import select_camera
 from launch_image_labeler import launch_image_labeler
+from image_comparison import compare_boards
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
@@ -35,6 +36,7 @@ def menu():
     print("4. Capture test board images")
     print("5. Label existing board type")
     print("6. View existing board types")
+    print("7. Compare golden and test board images")
     print("q. Quit\n")
 
     menu_option = input("Type option number here: ")
@@ -52,6 +54,8 @@ def menu():
         label_board_type()
     elif menu_option == '6':
         view_board_types_option()
+    elif menu_option == '7':
+        run_comparison_board_type()
     elif menu_option == 'q' or menu_option == 'Q':
         print("Closing program...")
         quit()
@@ -205,6 +209,37 @@ def view_board_types_option():
     """This is the actual (standalone) menu option that allows the user to see the existing board types"""
     view_board_types()
     menu_return()
+
+def run_comparison_board_type():
+    """This is the menu option for running a board comparison for a board type.
+    The program will look at the golden board for a selected board type and compare it to the test boards captured for the same board type."""
+    print("RUN COMPARISON ON A BOARD TYPE")
+    print("------------------------------")
+
+    view_board_types()
+    board_type = input("Select a board type: ")
+
+    selected_board_dir = BOARDS_DIR / board_type
+
+    # Check if board type exists, else return to menu
+    if selected_board_dir.exists():
+        print(f"Board type '{board_type}' was found.")
+
+        '''CODING PLAN:'''
+        '''Get golden board image'''
+        golden_board_filepath = selected_board_dir / "golden.png"
+
+        '''Get test board images''' # NOTE: we have multiple test boards. How to store each difference image result? I think best action is to create a frequency map.
+        test_board_filepath = selected_board_dir / "test.png"
+
+        '''Compare golden board to each test board'''
+        compare_boards(golden_board_filepath, test_board_filepath)
+        '''Maybe make a frequency map of where the most errors occur'''
+
+        menu_return()
+    else:
+        print(f"ERROR: The board '{board_type}' was not found!")
+        menu_return()
 
 def menu_return():
     print("Returning to menu...\n")
