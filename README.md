@@ -87,39 +87,40 @@ map_errors.py:
 ```
 
 ### Boards would appear in a folder like this
+*Note: image save type for program is .jpg*
 ```text
 .
 ├── boards
 │   ├── arduino
-│   │   ├── golden.png
+│   │   ├── golden.jpg
 │   │   └── roi.json
 │   ├── power
 │   │   ├── classes.txt
-│   │   ├── golden.png
+│   │   ├── golden.jpg
 │   │   ├── golden.txt
 │   │   └── roi.json
 │   ├── buck
 │   │   ├── classes.txt
-│   │   ├── golden.png
+│   │   ├── golden.jpg
 │   │   ├── golden.txt
 │   │   ├── next-test-img-num.json
 │   │   ├── roi.json
-│   │   ├── test1.png
-│   │   ├── test2.png
-│   │   ├── test23.png
-│   │   ├── test24.png
-│   │   ├── test25.png
-│   │   ├── test26.png
-│   │   ├── test27.png
-│   │   ├── test28.png
-│   │   ├── test29.png
-│   │   └── test30.png
+│   │   ├── test1.jpg
+│   │   ├── test2.jpg
+│   │   ├── test23.jpg
+│   │   ├── test24.jpg
+│   │   ├── test25.jpg
+│   │   ├── test26.jpg
+│   │   ├── test27.jpg
+│   │   ├── test28.jpg
+│   │   ├── test29.jpg
+│   │   └── test30.jpg
 │   └── buck-boost
-│       ├── golden.png
+│       ├── golden.jpg
 │       ├── next-test-img-num.json
 │       ├── roi.json
-│       ├── test1.png
-│       └── test2.png
+│       ├── test1.jpg
+│       └── test2.jpg
 ```
 
 ### Images currently included in GitHub repository
@@ -129,5 +130,7 @@ map_errors.py:
 │   ├── board_golden.txt
 │   ├── board_inferno.jpg
 │   ├── board_test.jpg
-│   └── classes.txt
+│   ├── classes.txt
+│   ├── golden.png
+└   └── test1.png
 ```

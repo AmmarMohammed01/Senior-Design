@@ -132,4 +132,5 @@ def picam_take_test_board_image(board_dir_path):
     # Save and display cropped image
     test_board_filepath = board_dir_path / test_board_file_name
     cv.imwrite(test_board_filepath, cropped_img)
+    print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
 

@@ -190,7 +190,7 @@ def label_board_type():
 
     # Check if board type exists, else return to menu
     if selected_board_dir.exists():
-        golden_board_file = selected_board_dir / "golden.png"
+        golden_board_file = selected_board_dir / "golden.jpg"
         print(f"Board type '{board_type}' was found.")
         print(golden_board_file)
         launch_image_labeler(golden_board_file)
@@ -235,10 +235,11 @@ def run_comparison_board_type():
 
         '''CODING PLAN:'''
         '''Get golden board image'''
-        golden_board_filepath = selected_board_dir / "golden.png"
+        golden_board_filepath = selected_board_dir / "golden.jpg"
 
         '''Get test board images''' # NOTE: we have multiple test boards. How to store each difference image result? I think best action is to create a frequency map.
-        test_board_filepath = selected_board_dir / "test1.png"
+        input_test_board_filename = input("Type the filename of the test board you want to compare golden board to (example: test1.jpg): ")
+        test_board_filepath = selected_board_dir / input_test_board_filename
 
         '''Compare golden board to each test board'''
         compare_boards(golden_board_filepath, test_board_filepath)

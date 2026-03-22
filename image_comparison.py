@@ -67,7 +67,7 @@ def compare_boards(img1_file, img2_file):
     img2 = cv.imread(img2_file)
 
     if img1 is None or img2 is None:
-        raise FileNotFoundError("One or both images not found. Make sure 'image1.png' and 'image2.png' are uploaded!")
+        raise FileNotFoundError("One or both images not found. Make sure 'golden.jpg' and 'test#.jpg' are in boards folder!")
 
     # --- Resize to same dimensions ---
     h = min(img1.shape[0], img2.shape[0])
