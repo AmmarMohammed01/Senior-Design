@@ -1,5 +1,4 @@
 .venv
-*.png
 .DS_Store
 dev.txt
 .python3.9venv

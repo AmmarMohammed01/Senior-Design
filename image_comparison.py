@@ -108,8 +108,12 @@ def compare_boards(img1_file, img2_file):
     inferno = cv.applyColorMap(diff_blurred, cv.COLORMAP_INFERNO)
     # cv.imwrite("./images/board_inferno.jpg", inferno)
 
-    cv.imshow('difference', inferno)
-    if cv.waitKey(0) == ord('q'):
-        cv.destroyAllWindows()
+    while(True):
+        cv.imshow('difference', inferno)
+        if cv.waitKey(1) == ord('q'):
+            cv.destroyAllWindows()
+            for i in range(4):
+                cv.waitKey(1)
+            break
 
 # compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")

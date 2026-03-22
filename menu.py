@@ -22,6 +22,7 @@ from take_image_picam import picam_take_golden_board_image, picam_take_test_boar
 import select_camera
 from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
+from map_errors import map_errors
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
@@ -237,7 +238,7 @@ def run_comparison_board_type():
         golden_board_filepath = selected_board_dir / "golden.png"
 
         '''Get test board images''' # NOTE: we have multiple test boards. How to store each difference image result? I think best action is to create a frequency map.
-        test_board_filepath = selected_board_dir / "test.png"
+        test_board_filepath = selected_board_dir / "test1.png"
 
         '''Compare golden board to each test board'''
         compare_boards(golden_board_filepath, test_board_filepath)
