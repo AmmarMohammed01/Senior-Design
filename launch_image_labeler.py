@@ -12,7 +12,7 @@ from pathlib import Path
 def launch_image_labeler(golden_board_filepath):
     SCRIPT_DIR = Path(__file__).parent.resolve()
     # venv_python = r"C:\path\to\your\venv39\Scripts\labelImg.exe" # Windows system
-    labelImg_path = SCRIPT_DIR / ".python3.9venv/bin/labelImg" # Assumes UNIX-like system
+    labelImg_path = SCRIPT_DIR / "labelimg_env/bin/labelImg" # Assumes UNIX-like system
 
     try:
         # Call the executable

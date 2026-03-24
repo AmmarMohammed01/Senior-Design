@@ -41,6 +41,68 @@ python main.py
 deactivate
 ```
 
+## Create venv for labelImg
+### Background
+labelImg is the labeling program used the label the golden boards.
+A caveat we face using it is that it need to run on Python 3.9 for stability.
+Hence, we need to create a Python 3.9 Virtual Environment (venv)
+
+### Mac Instructions
+1. Install Python 3.9
+```bash
+# Install using Homebrew
+brew install python@3.9
+
+# To check if installed
+which python3.9 # should be /opt/homebrew/bin/python3.9
+```
+
+2. Create virtual environment w/ Python 3.9
+```bash
+python3.9 -m venv labelimg_env
+```
+
+3. Install labelImg program
+```bash
+source labelimg_env/bin/activate
+pip install labelImg
+
+deactivate
+```
+
+### Raspberry Pi 5 Instructions
+
+1. Install dependencies to compile from source
+```bash
+sudo apt update
+sudo apt install -y build-essential libssl-dev zlib1g-dev \
+libbz2-dev libreadline-dev libsqlite3-dev curl \
+libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+```
+2. Install pyenv
+```bash
+curl https://pyenv.run | bash
+```
+
+3. Install Python 3.9 using pyenv
+```bash
+pyenv install 3.9.21
+```
+
+4. Create virtual environment with Python 3.9
+```bash
+~/.pyenv/versions/3.9.21/bin/python -m venv labelimg_env
+```
+
+5. Install labelImg program
+```bash
+source labelimg_env/bin/activate
+pip install labelImg
+
+deactivate
+```
+
+
 ## File Structure
 ### Main Files in GitHub Repo
 ```text

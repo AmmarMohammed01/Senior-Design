@@ -1,14 +1,18 @@
+# Virtual Environments
 .venv
+labelimg_env
+
+# Mac file
 .DS_Store
-dev.txt
-.python3.9venv
-__pycache__
 
+# Images
 boards
-
 images/Board1.png
 images/Board2.png
 images/SSIM*
 labeled\ images
-
 progress_images
+
+# Miscellaneous
+dev.txt
+__pycache__

@@ -2,6 +2,8 @@
 FILE: map_errors.py
 Contains:
 - class YOLOLabel
+    - def convert_to_label(self, label_coordinates, label_classes)
+    - def print_label(self)
 - def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file)
 - def get_YOLO_label(golden_board_components_file)
 - def get_YOLO_classes(golden_board_classes_file)
