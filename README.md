@@ -82,6 +82,14 @@ libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-d
 2. Install pyenv
 ```bash
 curl https://pyenv.run | bash
+
+# After installed, add this to ~/.bashrc
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+
+# Next time terminal is launched you should see something like this: 
+which pyenv # /home/team2299/.pyenv/bin/pyenv
 ```
 
 3. Install Python 3.9 using pyenv
@@ -102,6 +110,21 @@ pip install labelImg
 deactivate
 ```
 
+6. Facing PyQt Issues
+```text
+I have Raspberry Pi 5. 
+I have a Python program running Python 3.13.5. 
+Need to launch labelImg from it. 
+But labelImg need python 3.9 to run without crashing. 
+I have pyenv installed. 
+I ran into issue with PyQt installation when "pip install labelImg"
+```
+
+```bash
+sudo apt update
+sudo apt install python3-pyqt5 pyqt5-dev-tools qttools5-dev-tools
+pip install labelImg --no-deps
+```
 
 ## File Structure
 ### Main Files in GitHub Repo

@@ -26,11 +26,13 @@ try:
     from libcamera import controls
     HAS_PICAMERA = True
 
+    '''
     height = 2592 #480
     width = 4608 # 640
     cam = Picamera2()
     cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
     cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
+    '''
     # cam.start()
 except (ImportError, ModuleNotFoundError):
     HAS_PICAMERA = False
@@ -40,6 +42,11 @@ import numpy as np
 def picam_take_golden_board_image(board_dir_path):
     """Take image of GOLDEN board"""
     """Open PiCamera"""
+    height = 2592 #480
+    width = 4608 # 640
+    cam = Picamera2()
+    cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
+    cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
     cam.start()
     final_frame = np.array([])
 
@@ -85,6 +92,11 @@ def picam_take_test_board_image(board_dir_path):
         roi = json.load(f)
 
     """Open PiCamera"""
+    height = 2592 #480
+    width = 4608 # 640
+    cam = Picamera2()
+    cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
+    cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
     cam.start()
     final_frame = np.array([])
 
