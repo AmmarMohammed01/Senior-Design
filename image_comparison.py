@@ -53,7 +53,7 @@ def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255):
     ssim_index = np.mean(ssim_map)
     return ssim_index, ssim_map
 
-def compare_boards(img1_file, img2_file):
+def compare_boards(img1_file, img2_file, comparison_filename=None):
     """Compare two boards using SSIM.
     The output is an image showing the differences between the two images.
     Parameters:
@@ -67,6 +67,8 @@ def compare_boards(img1_file, img2_file):
     img2 = cv.imread(img2_file)
 
     if img1 is None or img2 is None:
+        print(f"Image 1 (gold) filepath: {img1_file}")
+        print(f"Image 2 (gold) filepath: {img2_file}")
         raise FileNotFoundError("One or both images not found. Make sure 'golden.jpg' and 'test#.jpg' are in boards folder!")
 
     # --- Resize to same dimensions ---
@@ -115,5 +117,9 @@ def compare_boards(img1_file, img2_file):
             for i in range(4):
                 cv.waitKey(1)
             break
+
+    '''Save the file'''
+    if comparison_filename is not None:
+        cv.imwrite(comparison_filename, inferno)
 
 # compare_boards("./images/board_golden.jpg", "./images/board_test.jpg")

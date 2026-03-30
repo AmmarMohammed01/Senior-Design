@@ -19,6 +19,9 @@ import cv2 as cv
 import json
 from pathlib import Path
 
+# our own .py files
+from image_comparison import compare_boards
+
 #picam imports
 try:
     '''Import picamera only if the picamera library is installed on user's device'''
@@ -129,20 +132,28 @@ def picam_take_test_board_image(board_dir_path):
     next_test_num_filepath = board_dir_path / "next-test-img-num.json"
 
     test_board_file_name = "test"
+    comparison_result_file_name = "compare"
 
     if next_test_num_filepath.exists():
         with open(next_test_num_filepath, "r") as f:
             next_test_num = json.load(f)
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
+            comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
         with open(next_test_num_filepath, "w") as f:
             json.dump((next_test_num + 1), f)
     else:
         with open(next_test_num_filepath, "w") as f:
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
+            comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image
     test_board_filepath = board_dir_path / test_board_file_name
     cv.imwrite(test_board_filepath, cropped_img)
     print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
+
+    '''RUN IMAGE COMPARISON'''
+    golden_board_filepath = board_dir_path / "golden.jpg"
+    comparison_result_filepath = board_dir_path / comparison_result_file_name
+    compare_boards(golden_board_filepath, test_board_filepath, comparison_result_filepath)
 
