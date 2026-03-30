@@ -71,7 +71,7 @@ deactivate
 ```
 
 ### Raspberry Pi 5 Instructions
-
+<!--
 1. Install dependencies to compile from source
 ```bash
 sudo apt update
@@ -124,6 +124,32 @@ I ran into issue with PyQt installation when "pip install labelImg"
 sudo apt update
 sudo apt install python3-pyqt5 pyqt5-dev-tools qttools5-dev-tools
 pip install labelImg --no-deps
+```
+-->
+1. Create Python Virtual Environment on latest version
+```bash
+python -m venv labelimg_env --system-site-packages
+```
+
+2. Activate venv
+```bash
+source labelimg_env/bin/activate
+```
+
+3. Install labelImg program
+```bash
+pip install labelImg # Currently using labelImg-1.8.6
+```
+
+4. Make adjustments to code to fix "float" error
+```text
+labelImg.py: line 965
+canvas.py: 526, 530, 531
+```
+
+5. Deactivate after installation and program setup complete
+```bash
+deactivate
 ```
 
 ## File Structure
