@@ -237,10 +237,46 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
 
     comparison_img_files = list(selected_board_dir.glob("compare*.jpg"))
 
+    golden_board_component_points = get_YOLO_label(yolo_coordinates_filepath)
+    golden_board_componennt_names = get_YOLO_classes(yolo_classes_filepath)
+
     '''Open a comparison file, increment counter for each component'''
-    # for comparison_image in comparison_img_files:
-        # print(comparison_image)
-        # map_errors(comparison_image, yolo_coordinates_filepath, yolo_classes_filepath, golden_board_filepath)
+    for comparison_image_file in comparison_img_files:
+        print(comparison_image_file)
+
+        comparison_img = cv.imread(comparison_image_file)
+        assert comparison_img is not None, "Error: Golden Board Image Not Found"
+        height = 0
+        width = 0
+
+        if comparison_img is not None:
+            height, width = comparison_img.shape[:2]
+            print(f"height: {height}, width: {width}")
+        else:
+            print("Heatmap Image not found")
+            exit()
+
+        if golden_board_component_points and golden_board_componennt_names:
+            # print(golden_board_component_points)
+
+            for index, label_info in enumerate(golden_board_component_points):
+                current_label = YOLOLabel()
+                current_label.convert_to_label(label_info, golden_board_componennt_names)
+
+                center_x = current_label.label_x * width
+                center_y = current_label.label_y * height
+                y1, y2 = center_y - (height * current_label.label_height) / 2, center_y + (height * current_label.label_height) / 2
+                x1, x2 = center_x - (width * current_label.label_width) / 2, center_x + (width * current_label.label_width) / 2
+                x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+                # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
+
+                # cv.rectangle(heatmap_img, (x1, y1), (x2, y2), (0,255,0), 5)
+                has_possible_defect = detect_possible_defect(comparison_img, x1, y1, x2, y2)
+                if has_possible_defect:
+                    component_defect_frequency[index] += 1
+                # has_possible_defect_str = "potential defect" if has_possible_defect == True else "good"
+                # print(f"{current_label.label_name}: {has_possible_defect_str}")
+
 
     '''Display counter on center of each component overlayed on golden board image'''
     golden_board_img = cv.imread(golden_board_filepath)
@@ -255,8 +291,8 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
         print("Heatmap Image not found")
         exit()
 
-    golden_board_component_points = get_YOLO_label(yolo_coordinates_filepath)
-    golden_board_componennt_names = get_YOLO_classes(yolo_classes_filepath)
+    # golden_board_component_points = get_YOLO_label(yolo_coordinates_filepath)
+    # golden_board_componennt_names = get_YOLO_classes(yolo_classes_filepath)
 
     if golden_board_component_points and golden_board_componennt_names:
         for index, label_info in enumerate(golden_board_component_points):
@@ -265,9 +301,6 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
 
             center_x = current_label.label_x * width
             center_y = current_label.label_y * height
-            y1, y2 = center_y - (height * current_label.label_height) / 2, center_y + (height * current_label.label_height) / 2
-            x1, x2 = center_x - (width * current_label.label_width) / 2, center_x + (width * current_label.label_width) / 2
-            x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
 
             cv.putText(golden_board_img, str(component_defect_frequency[index]), (int(center_x), int(center_y)), cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA) 
 
