@@ -112,8 +112,13 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
 
         cv.imshow('heatmap', heatmap_img)
         cv.imshow('golden_board', overlay)
-        if cv.waitKey(0) == ord('q'):
-            cv.destroyAllWindows()
+
+        while True:
+            if cv.waitKey(1) == ord('q'):
+                cv.destroyAllWindows()
+                for i in range(4):
+                    cv.waitKey(1)
+                break
 
 def get_YOLO_label(golden_board_components_file):
     """Get the YOLO label coordinates

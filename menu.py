@@ -264,6 +264,7 @@ def generate_defect_frequency_map():
     golden_board_filepath = selected_board_dir / "golden.jpg"
     next_test_img_filepath = selected_board_dir / "next-test-img-num.json"
     yolo_coordinates_filepath = selected_board_dir / "golden.txt"
+    yolo_classes_filepath = selected_board_dir / "classes.txt"
 
     # Check if board type exists
     if not selected_board_dir.exists():
@@ -283,7 +284,7 @@ def generate_defect_frequency_map():
         return menu_return()
 
     # Check if the board labels exists
-    elif not yolo_coordinates_filepath.exists():
+    elif not yolo_coordinates_filepath.exists() or not yolo_classes_filepath.exists():
         print(f"ERROR: No labels for '{board_type} were found!'")
         print("Please label the golden board image first.")
         return menu_return()
@@ -302,7 +303,14 @@ def generate_defect_frequency_map():
     component_defect_frequency = {component: 0 for component in component_keys}
     print(component_defect_frequency)
 
+    comparison_img_files = list(selected_board_dir.glob("compare*.jpg"))
 
+    '''Open a comparison file, increment counter for each component'''
+    for comparison_image in comparison_img_files:
+        # print(comparison_image)
+        map_errors(comparison_image, yolo_coordinates_filepath, yolo_classes_filepath, golden_board_filepath)
+
+    '''Display counter on center of each component overlayed on golden board image'''
 
     return menu_return()
 
