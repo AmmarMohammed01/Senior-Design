@@ -4,7 +4,7 @@ Contains:
 - class YOLOLabel
     - def convert_to_label(self, label_coordinates, label_classes)
     - def print_label(self)
-- def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file)
+- def map_errors(heatmap_img_file, golden_board_components_file, golden_board_classes_file, golden_board_img_file)
 - def get_YOLO_label(golden_board_components_file)
 - def get_YOLO_classes(golden_board_classes_file)
 - def detect_possible_defect(img, x1, y1, x2, y2) 

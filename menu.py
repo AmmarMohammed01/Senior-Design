@@ -28,41 +28,45 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
 
 def menu():
-    print(select_camera.camera_choice)
-    print("PCB QUALITY CHECKER")
-    print("-------------------")
-    print("1. Add new board type")
-    print("2. Remove board type")
-    print("3. Capture golden board image")
-    print("4. Capture test board images")
-    print("5. Label existing board type")
-    print("6. View existing board types")
-    print("7. Compare golden and test board images")
-    print("q. Quit\n")
+    while True:
+        print(select_camera.camera_choice)
+        print("PCB QUALITY CHECKER")
+        print("-------------------")
+        print("1. Add new board type")
+        print("2. Remove board type")
+        print("3. Capture golden board image")
+        print("4. Capture test board images")
+        print("5. Label existing board type")
+        print("6. View existing board types")
+        print("7. Compare golden and test board images")
+        print("8. Generate defect frequency map")
+        print("q. Quit\n")
 
-    menu_option = input("Type option number here: ")
-    print()
+        menu_option = input("Type option number here: ")
+        print()
 
-    if menu_option == '1':
-        add_board_type()
-    elif menu_option == '2':
-        remove_board_type()
-    elif menu_option == '3':
-        capture_golden_board_image()
-    elif menu_option == '4':
-        capture_test_board_images()
-    elif menu_option == '5':
-        label_board_type()
-    elif menu_option == '6':
-        view_board_types_option()
-    elif menu_option == '7':
-        run_comparison_board_type()
-    elif menu_option == 'q' or menu_option == 'Q':
-        print("Closing program...")
-        quit()
-    else:
-        print("Invalid option, try again...")
-        menu_return()
+        if menu_option == '1':
+            add_board_type()
+        elif menu_option == '2':
+            remove_board_type()
+        elif menu_option == '3':
+            capture_golden_board_image()
+        elif menu_option == '4':
+            capture_test_board_images()
+        elif menu_option == '5':
+            label_board_type()
+        elif menu_option == '6':
+            view_board_types_option()
+        elif menu_option == '7':
+            run_comparison_board_type()
+        elif menu_option == '8':
+            generate_defect_frequency_map()
+        elif menu_option == 'q' or menu_option == 'Q':
+            print("Closing program...")
+            break
+        else:
+            print("Invalid option, try again...")
+            menu_return()
 
 def add_board_type():
     print("ADD NEW BOARD TYPE")
@@ -89,7 +93,6 @@ def remove_board_type():
     print("If you need to backup the data, go to the 'boards/' folder and save the board elsewhere\n")
 
     view_board_types()
-
     remove_board_name = input("Type name of board to delete: ")
 
     confirm_option = input(f"Are you sure you want to remove board '{remove_board_name}'? Type y or n: ")
@@ -116,8 +119,8 @@ def remove_board_type():
 def capture_golden_board_image():
     print("CAPTURE GOLDEN BOARD IMAGE")
     print("--------------------------")
-    view_board_types()
 
+    view_board_types()
     board_type = input("Select board type: ")
     selected_board_dir = BOARDS_DIR / board_type
 
@@ -142,10 +145,9 @@ def capture_golden_board_image():
 def capture_test_board_images():
     print("CAPTURE TEST BOARD IMAGES")
     print("-------------------------")
+
     view_board_types()
-
     board_type = input("Select board type: ")
-
     selected_board_dir = BOARDS_DIR / board_type
 
     # Check if board type exists, else return to menu
@@ -226,7 +228,6 @@ def run_comparison_board_type():
 
     view_board_types()
     board_type = input("Select a board type: ")
-
     selected_board_dir = BOARDS_DIR / board_type
 
     # Check if board type exists, else return to menu
@@ -250,7 +251,44 @@ def run_comparison_board_type():
         print(f"ERROR: The board '{board_type}' was not found!")
         menu_return()
 
+
+def generate_defect_frequency_map():
+    """This menu option will generate a frequency map displaying the number of times each component was detected for having a potential defect,
+    which will then be overlayed onto the golden board."""
+    print("GENERATE DEFECT FREQUENCY MAP")
+    print("-----------------------------")
+
+    view_board_types()
+    board_type = input("Select a board type: ")
+    selected_board_dir = BOARDS_DIR / board_type
+    golden_board_filepath = selected_board_dir / "golden.jpg"
+    next_test_img_filepath = selected_board_dir / "next-test-img-num.json"
+    yolo_coordinates_filepath = selected_board_dir / "golden.txt"
+
+    # Check if board type exists
+    if not selected_board_dir.exists():
+        print(f"ERROR: The board '{board_type}' was not found!")
+        menu_return()
+    # Check if golden board image exists
+    elif not golden_board_filepath.exists():
+        print(f"ERROR: The golden board image for '{board_type}' was not found!")
+        print("Please capture image of golden board first.")
+        menu_return()
+    # Check if board type has test images
+    elif not next_test_img_filepath.exists():
+        print(f"ERROR: No test images for '{board_type}' were found!'")
+        print("Please capture image of a test board first.")
+        menu_return()
+    # Check if the board labels exists
+    elif not yolo_coordinates_filepath.exists():
+        print(f"ERROR: No labels for '{board_type} were found!'")
+        print("Please label the golden board image first.")
+        menu_return()
+    # Generate the frequency map if all above conditions are met
+    else:
+        print(f"Board type '{board_type}' was found.")
+        menu_return()
+
 def menu_return():
     print("Returning to menu...\n")
-    menu()
 
