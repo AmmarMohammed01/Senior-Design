@@ -152,6 +152,11 @@ def detect_possible_defect(img, x1, y1, x2, y2):
         - x2: bottom right x
         - y2: bottom right y
     Return Possible Defect Exists  = True or False
+
+    SUMMARY:
+    In other words, it takes the heat-map comparison image.
+    It looks at only one component (one labeled rectangle region).
+    It sees if it has a high intensity orange color. If true, then mark potentially defective.
     """
 
     '''Read Image & Get ROI'''

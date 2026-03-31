@@ -268,26 +268,43 @@ def generate_defect_frequency_map():
     # Check if board type exists
     if not selected_board_dir.exists():
         print(f"ERROR: The board '{board_type}' was not found!")
-        menu_return()
+        return menu_return() # NOTE TO SELF: same as return None, so you could have menu_return followed by return if wanted, or on same line
+
     # Check if golden board image exists
     elif not golden_board_filepath.exists():
         print(f"ERROR: The golden board image for '{board_type}' was not found!")
         print("Please capture image of golden board first.")
-        menu_return()
+        return menu_return()
+
     # Check if board type has test images
     elif not next_test_img_filepath.exists():
         print(f"ERROR: No test images for '{board_type}' were found!'")
         print("Please capture image of a test board first.")
-        menu_return()
+        return menu_return()
+
     # Check if the board labels exists
     elif not yolo_coordinates_filepath.exists():
         print(f"ERROR: No labels for '{board_type} were found!'")
         print("Please label the golden board image first.")
-        menu_return()
+        return menu_return()
+
     # Generate the frequency map if all above conditions are met
-    else:
-        print(f"Board type '{board_type}' was found.")
-        menu_return()
+    print(f"Board type '{board_type}' was found.")
+
+    '''Get number of components labeled
+    - count number of lines in text file'''
+    with open(yolo_coordinates_filepath, 'r') as f:
+        num_of_components = sum(1 for line in f)
+    print(f"Total number of components: {num_of_components}") # found out Python doesn't have block scope for variables (if/for/while/with), LEGB scope in Python, it does have enclosed/function scope
+
+    '''Create dictionary: key for each component, each value is a defect counter'''
+    component_keys = list(range(num_of_components))
+    component_defect_frequency = {component: 0 for component in component_keys}
+    print(component_defect_frequency)
+
+
+
+    return menu_return()
 
 def menu_return():
     print("Returning to menu...\n")
