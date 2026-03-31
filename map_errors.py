@@ -221,5 +221,63 @@ def suggest_defect_type(region_name):
 
     return defect_types[region_name]
 
+def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir, golden_board_filepath, yolo_classes_filepath):
+    """Generate defect frequency map"""
+
+    '''Get number of components labeled
+    - count number of lines in text file'''
+    with open(yolo_coordinates_filepath, 'r') as f:
+        num_of_components = sum(1 for line in f)
+    print(f"Total number of components: {num_of_components}") # found out Python doesn't have block scope for variables (if/for/while/with), LEGB scope in Python, it does have enclosed/function scope
+
+    '''Create dictionary: key for each component, each value is a defect counter'''
+    component_keys = list(range(num_of_components))
+    component_defect_frequency = {component: 0 for component in component_keys}
+    print(component_defect_frequency)
+
+    comparison_img_files = list(selected_board_dir.glob("compare*.jpg"))
+
+    '''Open a comparison file, increment counter for each component'''
+    # for comparison_image in comparison_img_files:
+        # print(comparison_image)
+        # map_errors(comparison_image, yolo_coordinates_filepath, yolo_classes_filepath, golden_board_filepath)
+
+    '''Display counter on center of each component overlayed on golden board image'''
+    golden_board_img = cv.imread(golden_board_filepath)
+    assert golden_board_img is not None, "Error: Golden Board Image Not Found"
+    height = 0
+    width = 0
+
+    if golden_board_img is not None:
+        height, width = golden_board_img.shape[:2]
+        print(f"height: {height}, width: {width}")
+    else:
+        print("Heatmap Image not found")
+        exit()
+
+    golden_board_component_points = get_YOLO_label(yolo_coordinates_filepath)
+    golden_board_componennt_names = get_YOLO_classes(yolo_classes_filepath)
+
+    if golden_board_component_points and golden_board_componennt_names:
+        for index, label_info in enumerate(golden_board_component_points):
+            current_label = YOLOLabel()
+            current_label.convert_to_label(label_info, golden_board_componennt_names)
+
+            center_x = current_label.label_x * width
+            center_y = current_label.label_y * height
+            y1, y2 = center_y - (height * current_label.label_height) / 2, center_y + (height * current_label.label_height) / 2
+            x1, x2 = center_x - (width * current_label.label_width) / 2, center_x + (width * current_label.label_width) / 2
+            x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+
+            cv.putText(golden_board_img, str(component_defect_frequency[index]), (int(center_x), int(center_y)), cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA) 
+
+    cv.imshow('Frequency Map', golden_board_img)
+    while True:
+        if cv.waitKey(1) == ord('q'):
+            cv.destroyAllWindows()
+            for i in range(4):
+                cv.waitKey(1)
+            break
+
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')

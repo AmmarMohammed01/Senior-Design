@@ -22,7 +22,7 @@ from take_image_picam import picam_take_golden_board_image, picam_take_test_boar
 import select_camera
 from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
-from map_errors import map_errors
+from map_errors import generate_defect_frequency_map, map_errors
 
 SCRIPT_DIR = Path(__file__).parent.resolve()
 BOARDS_DIR = SCRIPT_DIR / "boards"
@@ -60,7 +60,7 @@ def menu():
         elif menu_option == '7':
             run_comparison_board_type()
         elif menu_option == '8':
-            generate_defect_frequency_map()
+            option_defect_frequency_map()
         elif menu_option == 'q' or menu_option == 'Q':
             print("Closing program...")
             break
@@ -252,7 +252,7 @@ def run_comparison_board_type():
         menu_return()
 
 
-def generate_defect_frequency_map():
+def option_defect_frequency_map():
     """This menu option will generate a frequency map displaying the number of times each component was detected for having a potential defect,
     which will then be overlayed onto the golden board."""
     print("GENERATE DEFECT FREQUENCY MAP")
@@ -292,25 +292,8 @@ def generate_defect_frequency_map():
     # Generate the frequency map if all above conditions are met
     print(f"Board type '{board_type}' was found.")
 
-    '''Get number of components labeled
-    - count number of lines in text file'''
-    with open(yolo_coordinates_filepath, 'r') as f:
-        num_of_components = sum(1 for line in f)
-    print(f"Total number of components: {num_of_components}") # found out Python doesn't have block scope for variables (if/for/while/with), LEGB scope in Python, it does have enclosed/function scope
+    generate_defect_frequency_map(yolo_coordinates_filepath=yolo_coordinates_filepath, selected_board_dir=selected_board_dir, golden_board_filepath=golden_board_filepath, yolo_classes_filepath=yolo_classes_filepath)
 
-    '''Create dictionary: key for each component, each value is a defect counter'''
-    component_keys = list(range(num_of_components))
-    component_defect_frequency = {component: 0 for component in component_keys}
-    print(component_defect_frequency)
-
-    comparison_img_files = list(selected_board_dir.glob("compare*.jpg"))
-
-    '''Open a comparison file, increment counter for each component'''
-    for comparison_image in comparison_img_files:
-        # print(comparison_image)
-        map_errors(comparison_image, yolo_coordinates_filepath, yolo_classes_filepath, golden_board_filepath)
-
-    '''Display counter on center of each component overlayed on golden board image'''
 
     return menu_return()
 
