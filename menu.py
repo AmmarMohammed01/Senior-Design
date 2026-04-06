@@ -244,6 +244,7 @@ def run_comparison_board_type():
 
         '''Compare golden board to each test board'''
         compare_boards(golden_board_filepath, test_board_filepath)
+
         '''Maybe make a frequency map of where the most errors occur'''
 
         menu_return()

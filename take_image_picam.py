@@ -152,8 +152,11 @@ def picam_take_test_board_image(board_dir_path):
     cv.imwrite(test_board_filepath, cropped_img)
     print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
 
-    '''RUN IMAGE COMPARISON'''
+    '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
     golden_board_filepath = board_dir_path / "golden.jpg"
+    align_board_filepath = orb_to_align(golden_board_filepath, test_board_filepath)
+
+    '''RUN IMAGE COMPARISON'''
     comparison_result_filepath = board_dir_path / comparison_result_file_name
-    compare_boards(golden_board_filepath, test_board_filepath, comparison_result_filepath)
+    compare_boards(golden_board_filepath, align_board_filepath, comparison_result_filepath)
 

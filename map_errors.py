@@ -182,10 +182,13 @@ def detect_possible_defect(img, x1, y1, x2, y2):
 
     result = cv.cvtColor(result, cv.COLOR_HSV2BGR) # without this, display is yellow, doesn't affect mask summation just imshow
     combined_image = cv.hconcat([roi, result])
+
+    '''
     cv.imshow('comparison', combined_image)
 
     if cv.waitKey(0) == ord('q'):
         cv.destroyAllWindows()
+    '''
 
     '''If found return defect, else return good'''
     if np.sum(mask) > 0:
@@ -301,8 +304,14 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
 
             center_x = current_label.label_x * width
             center_y = current_label.label_y * height
+            y1, y2 = center_y - (height * current_label.label_height) / 2, center_y + (height * current_label.label_height) / 2
+            x1, x2 = center_x - (width * current_label.label_width) / 2, center_x + (width * current_label.label_width) / 2
+            x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+            # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
 
-            cv.putText(golden_board_img, str(component_defect_frequency[index]), (int(center_x), int(center_y)), cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA) 
+            '''Draw a rectangle around component. In center of rectangle, put counter/frequency of how many times component was detected for error.'''
+            cv.rectangle(golden_board_img, (x1, y1), (x2, y2), (0,255,0), thickness=1)
+            cv.putText(golden_board_img, str(component_defect_frequency[index]), (int(center_x), int(center_y)), cv.FONT_HERSHEY_SIMPLEX, fontScale=0.5, color=(0, 255, 0), thickness=2, lineType=cv.LINE_AA) 
 
     cv.imshow('Frequency Map', golden_board_img)
     while True:
