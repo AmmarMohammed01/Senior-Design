@@ -11,6 +11,7 @@ Contains two functions:
 - compare_boards()
 """
 
+from pathlib import Path
 import cv2 as cv
 import numpy as np
 
@@ -53,7 +54,7 @@ def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255):
     ssim_index = np.mean(ssim_map)
     return ssim_index, ssim_map
 
-def compare_boards(img1_file, img2_file, comparison_filename=None):
+def compare_boards(img1_file: str | Path, img2_file: str | Path, comparison_filename=None):
     """Compare two boards using SSIM.
     The output is an image showing the differences between the two images.
     Parameters:
@@ -108,7 +109,6 @@ def compare_boards(img1_file, img2_file, comparison_filename=None):
     print(f"SSIM (Blurred):  {score_blur:.4f}")
 
     inferno = cv.applyColorMap(diff_blurred, cv.COLORMAP_INFERNO)
-    # cv.imwrite("./images/board_inferno.jpg", inferno)
 
     while(True):
         cv.imshow('difference', inferno)

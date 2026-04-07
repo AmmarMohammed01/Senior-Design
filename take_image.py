@@ -13,9 +13,10 @@ from pathlib import Path
 from image_comparison import compare_boards
 from orb_method import orb_to_align
 
-def take_golden_board_image(board_dir_path):
+def take_golden_board_image(board_dir_path: Path | str):
     """Take image of GOLDEN board"""
     '''Open Camera'''
+    print(type(board_dir_path))
     capture = cv.VideoCapture(0)
     if not capture.isOpened():
         print("Cannot open camera")
@@ -60,7 +61,7 @@ def take_golden_board_image(board_dir_path):
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
 
-def take_test_board_image(board_dir_path):
+def take_test_board_image(board_dir_path: Path | str):
     """Take image of TEST board"""
 
     roi = (0,0,0,0)

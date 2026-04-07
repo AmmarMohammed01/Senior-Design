@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 import os
 
-def launch_image_labeler(golden_board_filepath):
+def launch_image_labeler(golden_board_filepath: str | Path) -> None:
     SCRIPT_DIR = Path(__file__).parent.resolve()
     # venv_python = r"C:\path\to\your\venv39\Scripts\labelImg.exe" # Windows system
     labelImg_path = SCRIPT_DIR / "labelimg_env/bin/labelImg" # Assumes UNIX-like system

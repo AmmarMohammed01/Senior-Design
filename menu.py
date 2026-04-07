@@ -68,7 +68,8 @@ def menu():
             print("Invalid option, try again...")
             menu_return()
 
-def add_board_type():
+def add_board_type() -> None:
+    """Creates a new folder to store images of a specified board type."""
     print("ADD NEW BOARD TYPE")
     print("------------------")
     new_board_name = input("Name of board: ")
@@ -86,7 +87,8 @@ def add_board_type():
         print("Please try again and select a different board name")
         menu_return()
 
-def remove_board_type():
+def remove_board_type() -> None:
+    """Deletes a folder of a board type, including all images and data within."""
     print("REMOVE BOARD TYPE")
     print("-----------------")
     print("CAUTION: Removing a board type will remove all related data!")
@@ -117,6 +119,11 @@ def remove_board_type():
         menu_return()
 
 def capture_golden_board_image():
+    """First: user to select a board type.
+    Next: Camera window opens.
+    Then: User presses 'Q' to capture an image of 'golden'/perfect board.
+    Finally: User selects rectangular region around the board - by click and dragging - then presses space to confirm."""
+
     print("CAPTURE GOLDEN BOARD IMAGE")
     print("--------------------------")
 
@@ -143,6 +150,11 @@ def capture_golden_board_image():
 
 
 def capture_test_board_images():
+    """First: user to select a board type.
+    Next: Camera window opens. It loads the rectangular outline user created when capturing golden board to help align test boards.
+    Then: User presses 'Q' to capture an image of test board.
+    Finally: Alignment and comparison are run on the test image immediately after."""
+
     print("CAPTURE TEST BOARD IMAGES")
     print("-------------------------")
 
@@ -173,6 +185,11 @@ def capture_test_board_images():
         menu_return()
 
 def label_board_type():
+    """First: User selects board type.
+    Next: labelImg program launches.
+    Then: User can label components and save labels in YOLO format.
+    Finally: User saves, exits, and returns to this program.
+    """
     print("LABEL EXISTING BOARD TYPE")
     print("-------------------------")
     view_board_types()
