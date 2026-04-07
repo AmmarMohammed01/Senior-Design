@@ -73,17 +73,16 @@ def add_board_type() -> None:
     print("ADD NEW BOARD TYPE")
     print("------------------")
     new_board_name = input("Name of board: ")
-    print(f"Creating: '{new_board_name}'")
 
     try:
         new_board_dir = BOARDS_DIR / new_board_name
         new_board_dir.mkdir(parents=True, exist_ok=False)
 
-        print(f"Board '{new_board_name}' successfully added")
+        print(f"SUCCESS: Board '{new_board_name}' folder created.")
         menu_return()
 
     except FileExistsError: # same as errno 17
-        print("ERROR: That board name is already in use!")
+        print(f"ERROR: The board name, {new_board_name}, is already in use!")
         print("Please try again and select a different board name")
         menu_return()
 
@@ -138,7 +137,8 @@ def capture_golden_board_image():
         # should see if golden board image exists?
         # should we have multiple golden boards?
         if select_camera.camera_choice == "usb":
-            take_golden_board_image(selected_board_dir)
+            take_golden_board_image(selected_board_dir, "top")
+            take_golden_board_image(selected_board_dir, "bottom")
         elif select_camera.camera_choice == "picam":
             picam_take_golden_board_image(selected_board_dir)
 
@@ -171,7 +171,8 @@ def capture_test_board_images():
 
         if roi_filepath.exists():
             if select_camera.camera_choice == "usb":
-                take_test_board_image(selected_board_dir)
+                take_test_board_image(selected_board_dir, "top")
+                take_test_board_image(selected_board_dir, "bottom")
                 print("Test board image captured!")
             elif select_camera.camera_choice == "picam":
                 picam_take_test_board_image(selected_board_dir)
