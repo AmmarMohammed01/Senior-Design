@@ -208,6 +208,10 @@ def label_board_type():
     board_type = input("Select board type: ")
     selected_board_dir = BOARDS_DIR / board_type
 
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir = selected_board_dir / board_face
+
     # Check if board type exists, else return to menu
     if selected_board_dir.exists():
         golden_board_file = selected_board_dir / "golden.jpg"
@@ -248,6 +252,10 @@ def run_comparison_board_type():
     board_type = input("Select a board type: ")
     selected_board_dir = BOARDS_DIR / board_type
 
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir = selected_board_dir / board_face
+
     # Check if board type exists, else return to menu
     if selected_board_dir.exists():
         print(f"Board type '{board_type}' was found.")
@@ -280,6 +288,11 @@ def option_defect_frequency_map():
     view_board_types()
     board_type = input("Select a board type: ")
     selected_board_dir = BOARDS_DIR / board_type
+
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir = selected_board_dir / board_face
+
     golden_board_filepath = selected_board_dir / "golden.jpg"
     next_test_img_filepath = selected_board_dir / "next-test-img-num.json"
     yolo_coordinates_filepath = selected_board_dir / "golden.txt"
