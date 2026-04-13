@@ -200,7 +200,9 @@ def capture_golden_board_image():
         take_golden_board_image(gv.selected_board_dir, "bottom")
     elif select_camera.camera_choice == "picam":
         print(f"Capturing golden board for {gv.board_type}")
-        picam_take_golden_board_image(gv.selected_board_dir)
+        picam_take_golden_board_image(gv.selected_board_dir, "top")
+        print(f"Capturing bottom golden board for {gv.board_type}")
+        picam_take_golden_board_image(gv.selected_board_dir, "bottom")
 
     print("Golden board image captured!")
     menu_return()
@@ -228,7 +230,9 @@ def capture_test_board_images():
             print("Test board image captured!")
         elif select_camera.camera_choice == "picam":
             print(f"Capturing test board for {gv.board_type}")
-            picam_take_test_board_image(gv.selected_board_dir)
+            picam_take_test_board_image(gv.selected_board_dir, "top")
+            print(f"Capturing bottom test board for {gv.board_type}")
+            picam_take_test_board_image(gv.selected_board_dir, "bottom")
             print("Test board image captured!")
         menu_return()
     else:
