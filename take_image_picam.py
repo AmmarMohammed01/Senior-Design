@@ -171,7 +171,7 @@ def picam_take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
 
     '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
-    golden_board_filepath = board_dir_path / "golden.jpg"
+    golden_board_filepath = board_dir_path / board_face / "golden.jpg"
     aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
     aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
     cv.imwrite(aligned_board_filepath, aligned_board_img)
