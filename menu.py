@@ -298,8 +298,7 @@ def run_comparison_board_type():
     The program will look at the golden board for a selected board type and compare it to the test boards captured for the same board type."""
     print("RUN COMPARISON ON A BOARD TYPE")
     print("------------------------------")
-
-    view_board_types()
+    print(f"CURRENT BOARD: {gv.board_type}")
 
     board_face = input("Select board face ('top' or 'bottom'): ")
     board_face = board_face.lower()
@@ -335,8 +334,7 @@ def option_defect_frequency_map():
     which will then be overlayed onto the golden board."""
     print("GENERATE DEFECT FREQUENCY MAP")
     print("-----------------------------")
-
-    view_board_types()
+    print(f"CURRENT BOARD: {gv.board_type}")
 
     board_face = input("Select board face ('top' or 'bottom'): ")
     board_face = board_face.lower()
@@ -371,7 +369,7 @@ def option_defect_frequency_map():
         return menu_return()
 
     # Generate the frequency map if all above conditions are met
-    print(f"Board type '{gv.board_type}' was found.")
+    print(f"Board type '{gv.board_type}' with '{board_face}' was found.")
 
     generate_defect_frequency_map(yolo_coordinates_filepath=yolo_coordinates_filepath, selected_board_dir=selected_board_dir_with_face, golden_board_filepath=golden_board_filepath, yolo_classes_filepath=yolo_classes_filepath)
 
