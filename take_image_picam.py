@@ -79,14 +79,14 @@ def picam_take_golden_board_image(board_dir_path: Path, board_face: str) -> None
         cv.waitKey(1)
 
     # Save ROI to be used for test board capture (roi.json) file
-    board_roi_file = board_dir_path / "roi.json"
+    board_roi_file = board_dir_path / board_face / "roi.json"
     with open(board_roi_file, "w") as f:
         json.dump(roi, f)
 
     # Extract cropped region
     cropped_img = final_frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    golden_board_file_name = board_dir_path / "golden.jpg"
+    golden_board_file_name = board_dir_path / board_face / "golden.jpg"
     print(golden_board_file_name)
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
@@ -97,7 +97,7 @@ def picam_take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     roi = (0,0,0,0)
 
     # load roi data used with golden board
-    board_roi_file = board_dir_path / "roi.json"
+    board_roi_file = board_dir_path / board_face / "roi.json"
     with open(board_roi_file, "r") as f:
         roi = json.load(f)
 
@@ -143,34 +143,39 @@ def picam_take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     Name the file using number. Store number + 1.
     '''
     next_test_num = 1
-    next_test_num_filepath = board_dir_path / "next-test-img-num.json"
+    next_test_num_filepath = board_dir_path / board_face / "next-test-img-num.json"
 
     test_board_file_name = "test"
     comparison_result_file_name = "compare"
+    aligned_board_file_name = "align"
 
     if next_test_num_filepath.exists():
         with open(next_test_num_filepath, "r") as f:
             next_test_num = json.load(f)
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
+            aligned_board_file_name = aligned_board_file_name + str(next_test_num) + ".jpg"
         with open(next_test_num_filepath, "w") as f:
             json.dump((next_test_num + 1), f)
     else:
         with open(next_test_num_filepath, "w") as f:
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
+            aligned_board_file_name = aligned_board_file_name + str(next_test_num) + ".jpg"
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image
-    test_board_filepath = board_dir_path / test_board_file_name
+    test_board_filepath = board_dir_path / board_face / test_board_file_name
     cv.imwrite(test_board_filepath, cropped_img)
     print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
 
     '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
     golden_board_filepath = board_dir_path / "golden.jpg"
-    align_board_filepath = orb_to_align(golden_board_filepath, test_board_filepath)
+    aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
+    aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
+    cv.imwrite(aligned_board_filepath, aligned_board_img)
 
     '''RUN IMAGE COMPARISON'''
-    comparison_result_filepath = board_dir_path / comparison_result_file_name
-    compare_boards(golden_board_filepath, align_board_filepath, comparison_result_filepath)
+    comparison_result_filepath = board_dir_path / board_face / comparison_result_file_name
+    compare_boards(golden_board_filepath, aligned_board_filepath, comparison_result_filepath)
 
