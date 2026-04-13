@@ -42,12 +42,19 @@ except (ImportError, ModuleNotFoundError):
     print("Picamera not found. Please use USB webcam instead.")
 import numpy as np
 
-def picam_take_golden_board_image(board_dir_path):
+def picam_take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""
     """Open PiCamera"""
     height = 2592 #480
     width = 4608 # 640
-    cam = Picamera2()
+
+    if board_face == "top":
+        cam = Picamera2(0) # Port 0: near ethernet port
+    elif board_face == "bottom":
+        cam = Picamera2(1) # Port 1: near MicroHDMI port
+    else:
+        cam = Picamera2(0)
+
     cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
     cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
     cam.start()
@@ -84,7 +91,7 @@ def picam_take_golden_board_image(board_dir_path):
     # Save and display cropped image
     cv.imwrite(golden_board_file_name, cropped_img)
 
-def picam_take_test_board_image(board_dir_path):
+def picam_take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of TEST board"""
 
     roi = (0,0,0,0)
@@ -97,7 +104,14 @@ def picam_take_test_board_image(board_dir_path):
     """Open PiCamera"""
     height = 2592 #480
     width = 4608 # 640
-    cam = Picamera2()
+
+    if board_face == "top":
+        cam = Picamera2(0) # Port 0: near ethernet port
+    elif board_face == "bottom":
+        cam = Picamera2(1) # Port 1: near MicroHDMI port
+    else:
+        cam = Picamera2(0)
+
     cam.configure(cam.create_video_configuration(main={"format": 'XRGB8888', "size": (width, height)}))
     cam.set_controls({"AfMode": controls.AfModeEnum.Continuous})
     cam.start()
