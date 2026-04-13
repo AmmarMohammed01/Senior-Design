@@ -23,13 +23,11 @@ import select_camera
 from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
 from map_errors import generate_defect_frequency_map, map_errors
-
-SCRIPT_DIR = Path(__file__).parent.resolve()
-BOARDS_DIR = SCRIPT_DIR / "boards"
+from pcb_global_variables import BOARDS_DIR
 
 def menu():
     while True:
-        print(select_camera.camera_choice)
+        # print(select_camera.camera_choice)
         print("PCB QUALITY CHECKER")
         print("-------------------")
         print("1. Add new board type")
@@ -68,6 +66,60 @@ def menu():
             print("Invalid option, try again...")
             menu_return()
 
+def menu_board_manager() -> None:
+    while True:
+        print("PCB QUALITY CHECKER")
+        print("-------------------")
+        print("1. Add new board type")
+        print("2. Remove board type")
+        print("3. View existing board types")
+        print("q. Quit\n")
+
+        menu_option = input("Type option number here: ")
+        print()
+
+        if menu_option == '1':
+            add_board_type()
+        elif menu_option == '2':
+            remove_board_type()
+        elif menu_option == '3':
+            view_board_types_option()
+        elif menu_option == 'q' or menu_option == 'Q':
+            print("Closing program...")
+            break
+        else:
+            print("Invalid option, try again...")
+            menu_return()
+
+def menu_board_operations() -> None:
+    while True:
+        print("1. Capture golden board image")
+        print("2. Capture test board images")
+        print("3. Label existing board type")
+        print("4. Compare golden and test board images")
+        print("5. Generate defect frequency map")
+        print("q. Quit\n")
+
+        menu_option = input("Type option number here: ")
+        print()
+
+        if menu_option == '1':
+            capture_golden_board_image()
+        elif menu_option == '2':
+            capture_test_board_images()
+        elif menu_option == '3':
+            label_board_type()
+        elif menu_option == '4':
+            run_comparison_board_type()
+        elif menu_option == '5':
+            option_defect_frequency_map()
+        elif menu_option == 'q' or menu_option == 'Q':
+            print("Closing program...")
+            break
+        else:
+            print("Invalid option, try again...")
+            menu_return()
+
 def add_board_type() -> None:
     """Creates a new folder to store images of a specified board type."""
     print("ADD NEW BOARD TYPE")
@@ -77,8 +129,14 @@ def add_board_type() -> None:
     try:
         new_board_dir = BOARDS_DIR / new_board_name
         new_board_dir.mkdir(parents=True, exist_ok=False)
-
         print(f"SUCCESS: Board '{new_board_name}' folder created.")
+
+        board_top_dir = new_board_dir / "top"
+        board_bot_dir = new_board_dir / "bottom"
+
+        board_top_dir.mkdir(parents=True, exist_ok=False)
+        board_bot_dir.mkdir(parents=True, exist_ok=False)
+
         menu_return()
 
     except FileExistsError: # same as errno 17
@@ -167,7 +225,9 @@ def capture_test_board_images():
         print(f"Board type '{board_type}' was found.")
 
         '''Check if golden board image exists, more specifically if roi coordinates of golden board exist''' 
-        roi_filepath = selected_board_dir / "roi.json"
+        # roi_filepath = selected_board_dir / "roi.json" # before TOP/BOTTOM implementation
+        roi_filepath = selected_board_dir / "top" / "roi.json"
+        # NEED TO CHECK FOR "bottom/roi.json" ???
 
         if roi_filepath.exists():
             if select_camera.camera_choice == "usb":
@@ -179,7 +239,7 @@ def capture_test_board_images():
                 print("Test board image captured!")
             menu_return()
         else:
-            print("ERROR: Golden board image not found") # Specifically ROI.json was not found
+            print("ERROR: Golden board ROI selection not found")
             menu_return()
     else:
         print(f"ERROR: The board '{board_type}' was not found!")
@@ -332,3 +392,15 @@ def option_defect_frequency_map():
 def menu_return():
     print("Returning to menu...\n")
 
+def select_board():
+    view_board_types()
+    board_type = input("Select board type: ")
+    selected_board_dir = BOARDS_DIR / board_type
+
+    # Check if board type exists, else return to menu
+    if selected_board_dir.exists():
+        print(f"Board type '{board_type}' was found.")
+
+    else:
+        print(f"ERROR: The board '{board_type}' was not found!")
+        return menu_return()

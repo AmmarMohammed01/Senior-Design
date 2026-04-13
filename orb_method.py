@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
+from pathlib import Path
 
-def orb_to_align(golden_img_filename: str, test_image_filename: str) -> str:
+def orb_to_align(golden_img_filename: Path, test_image_filename: Path) -> np.ndarray:
     """
     Get the golden board and test board images.
     Align the test board so that it is in the same position of the image the golden board is in.
@@ -25,6 +26,13 @@ def orb_to_align(golden_img_filename: str, test_image_filename: str) -> str:
     aligned = cv2.warpPerspective(img2, H, (img1.shape[1], img1.shape[0]))
 
     '''Save the aligned test board image as aligned#.jpg'''
-    new_test_filename = "align" + test_image_filename[4:]
-    cv2.imwrite(new_test_filename, aligned)
-    return new_test_filename
+    print(test_image_filename)
+    # print(test_image_filename[4:]) # PosixPath object is not scriptable, could use str() to convert entire path to str
+    print(test_image_filename.name)
+    new_test_filename = "align" + (test_image_filename.name)[4:]
+    print(new_test_filename)
+    # cv2.imwrite(new_test_filename, aligned)
+
+    # return new_test_filename
+    print(type(aligned))
+    return aligned

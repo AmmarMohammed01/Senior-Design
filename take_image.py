@@ -118,18 +118,21 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
     test_board_file_name = "test"
     comparison_result_file_name = "compare"
+    aligned_board_file_name = "align"
 
     if next_test_num_filepath.exists():
         with open(next_test_num_filepath, "r") as f:
             next_test_num = json.load(f)
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
+            aligned_board_file_name = aligned_board_file_name + str(next_test_num) + ".jpg"
         with open(next_test_num_filepath, "w") as f:
             json.dump((next_test_num + 1), f)
     else:
         with open(next_test_num_filepath, "w") as f:
             test_board_file_name = test_board_file_name + str(next_test_num) + ".jpg"
             comparison_result_file_name = comparison_result_file_name + str(next_test_num) + ".jpg"
+            aligned_board_file_name = aligned_board_file_name + str(next_test_num) + ".jpg"
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image
@@ -139,9 +142,11 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
     '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
     golden_board_filepath = board_dir_path / board_face / "golden.jpg"
-    align_board_filepath = orb_to_align(golden_board_filepath, test_board_filepath)
+    aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
+    aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
+    cv.imwrite(aligned_board_filepath, aligned_board_img)
 
     '''RUN IMAGE COMPARISON'''
-    comparison_result_filepath = board_dir_path / comparison_result_file_name
-    compare_boards(golden_board_filepath, align_board_filepath, comparison_result_filepath)
+    comparison_result_filepath = board_dir_path / board_face / comparison_result_file_name
+    compare_boards(golden_board_filepath, aligned_board_filepath, comparison_result_filepath)
 
