@@ -21,6 +21,7 @@ from pathlib import Path
 
 # our own .py files
 from image_comparison import compare_boards
+from orb_method import orb_to_align
 
 #picam imports
 try:
