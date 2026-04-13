@@ -1,0 +1,39 @@
+#include <Adafruit_NeoPixel.h>
+
+#define LED_PIN    5
+#define RELAY_PIN  7
+#define LED_COUNT  16
+
+Adafruit_NeoPixel ring(LED_COUNT, LED_PIN, NEO_RGBW + NEO_KHZ800);
+
+void setup() {
+  pinMode(RELAY_PIN, OUTPUT);
+  ring.begin();
+  ring.setBrightness(50);
+  ring.clear();
+  ring.show();
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Turn relay ON
+  digitalWrite(RELAY_PIN, LOW);   // change to HIGH if your relay is active HIGH
+  delay(500);
+
+  // Turn ring on
+  for (int i = 0; i < ring.numPixels(); i++) {
+    ring.setPixelColor(i, 0, 0, 255, 0);   // blue
+  }
+  ring.show();
+  delay(2000);
+
+  // Turn ring off in code first
+  ring.clear();
+  ring.show();
+  delay(200);
+
+  // Turn relay OFF
+  digitalWrite(RELAY_PIN, HIGH);  // change to LOW if your relay is active HIGH
+  delay(2000);
+  Serial.println("Done");
+}
