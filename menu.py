@@ -48,7 +48,6 @@ def menu_board_manager() -> None:
             view_board_types_option()
         elif menu_option == '4':
             select_board()
-            menu_board_operations()
         elif menu_option == 'q' or menu_option == 'Q':
             print("Closing program...")
             break
@@ -367,6 +366,7 @@ def select_board():
     # Check if board type exists, else return to menu
     if gv.selected_board_dir.exists():
         print(f"Board type '{gv.board_type}' was found.")
+        menu_board_operations()
     else:
         print(f"ERROR: The board '{gv.board_type}' was not found!")
         return menu_return()
