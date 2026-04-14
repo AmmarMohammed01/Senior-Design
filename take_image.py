@@ -21,6 +21,9 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     camera_index = 0 if board_face == "top" else 1 # other board_face is "bottom"
 
     capture = cv.VideoCapture(camera_index)
+    capture.set(cv.CAP_PROP_FOURCC, cv.VideoWriter_fourcc(*'MJPG'))
+    capture.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
+    capture.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
     if not capture.isOpened():
         print("Cannot open camera")
         exit()
@@ -78,6 +81,9 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     camera_index = 0 if board_face == "top" else 1 # other board_face is "bottom"
 
     capture = cv.VideoCapture(camera_index)
+    capture.set(cv.CAP_PROP_FOURCC, cv.VideoWriter_fourcc(*'MJPG'))
+    capture.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
+    capture.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
     if not capture.isOpened():
         print("Cannot open camera")
         exit()
