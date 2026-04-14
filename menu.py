@@ -24,47 +24,7 @@ from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
 from map_errors import generate_defect_frequency_map, map_errors
 import pcb_global_variables as gv
-
-def menu():
-    while True:
-        # print(select_camera.camera_choice)
-        print("PCB QUALITY CHECKER")
-        print("-------------------")
-        print("1. Add new board type")
-        print("2. Remove board type")
-        print("3. Capture golden board image")
-        print("4. Capture test board images")
-        print("5. Label existing board type")
-        print("6. View existing board types")
-        print("7. Compare golden and test board images")
-        print("8. Generate defect frequency map")
-        print("q. Quit\n")
-
-        menu_option = input("Type option number here: ")
-        print()
-
-        if menu_option == '1':
-            add_board_type()
-        elif menu_option == '2':
-            remove_board_type()
-        elif menu_option == '3':
-            capture_golden_board_image()
-        elif menu_option == '4':
-            capture_test_board_images()
-        elif menu_option == '5':
-            label_board_type()
-        elif menu_option == '6':
-            view_board_types_option()
-        elif menu_option == '7':
-            run_comparison_board_type()
-        elif menu_option == '8':
-            option_defect_frequency_map()
-        elif menu_option == 'q' or menu_option == 'Q':
-            print("Closing program...")
-            break
-        else:
-            print("Invalid option, try again...")
-            menu_return()
+import ringlight_code as light
 
 def menu_board_manager() -> None:
     while True:
@@ -195,14 +155,24 @@ def capture_golden_board_image():
     # should we have multiple golden boards?
     if select_camera.camera_choice == "usb":
         print(f"Capturing top golden board for {gv.board_type}")
+        light.turn_on("top")
         take_golden_board_image(gv.selected_board_dir, "top")
+        light.turn_off("top")
+
         print(f"Capturing bottom golden board for {gv.board_type}")
+        light.turn_on("bottom")
         take_golden_board_image(gv.selected_board_dir, "bottom")
+        light.turn_off("bottom")
     elif select_camera.camera_choice == "picam":
         print(f"Capturing golden board for {gv.board_type}")
+        light.turn_on("top")
         picam_take_golden_board_image(gv.selected_board_dir, "top")
+        light.turn_off("top")
+
         print(f"Capturing bottom golden board for {gv.board_type}")
+        light.turn_on("bottom")
         picam_take_golden_board_image(gv.selected_board_dir, "bottom")
+        light.turn_off("bottom")
 
     print("Golden board image captured!")
     menu_return()
@@ -224,15 +194,25 @@ def capture_test_board_images():
     if roi_filepath.exists():
         if select_camera.camera_choice == "usb":
             print(f"Capturing top test board for {gv.board_type}")
+            light.turn_on("top")
             take_test_board_image(gv.selected_board_dir, "top")
+            light.turn_off("top")
+
             print(f"Capturing bottom test board for {gv.board_type}")
+            light.turn_on("bottom")
             take_test_board_image(gv.selected_board_dir, "bottom")
+            light.turn_off("bottom")
             print("Test board image captured!")
         elif select_camera.camera_choice == "picam":
             print(f"Capturing test board for {gv.board_type}")
+            light.turn_on("top")
             picam_take_test_board_image(gv.selected_board_dir, "top")
+            light.turn_off("top")
+
             print(f"Capturing bottom test board for {gv.board_type}")
+            light.turn_on("bottom")
             picam_take_test_board_image(gv.selected_board_dir, "bottom")
+            light.turn_off("bottom")
             print("Test board image captured!")
         menu_return()
     else:
