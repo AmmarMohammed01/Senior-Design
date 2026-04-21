@@ -5,7 +5,7 @@ import neopixel
 PIXEL_PIN_TOP = board.D18   # GPIO18 - Top Ringlight
 PIXEL_PIN_BOTTOM = board.D12 # GPIO12 - Bottom Ringlight
 NUM_PIXELS = 16
-BRIGHTNESS = 0.3        # 0.0 to 1.0
+BRIGHTNESS = 0.1        # 0.0 to 1.0
 
 # Color constants
 WHITE_COLOR = (255,255,255)

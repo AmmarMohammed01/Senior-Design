@@ -159,9 +159,9 @@ def capture_golden_board_image():
         light.turn_off("top")
 
         print(f"Capturing bottom golden board for {gv.board_type}")
-        light.turn_on("bottom")
+        #light.turn_on("bottom")
         take_golden_board_image(gv.selected_board_dir, "bottom")
-        light.turn_off("bottom")
+        #light.turn_off("bottom")
     elif select_camera.camera_choice == "picam":
         print(f"Capturing golden board for {gv.board_type}")
         light.turn_on("top")
@@ -198,9 +198,9 @@ def capture_test_board_images():
             light.turn_off("top")
 
             print(f"Capturing bottom test board for {gv.board_type}")
-            light.turn_on("bottom")
+            #light.turn_on("bottom")
             take_test_board_image(gv.selected_board_dir, "bottom")
-            light.turn_off("bottom")
+            #light.turn_off("bottom")
             print("Test board image captured!")
         elif select_camera.camera_choice == "picam":
             print(f"Capturing test board for {gv.board_type}")
