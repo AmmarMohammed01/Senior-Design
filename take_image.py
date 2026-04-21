@@ -28,6 +28,11 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
         print("Cannot open camera")
         exit()
 
+    # 3. VERIFY the change
+    current_w = capture.get(cv.CAP_PROP_FRAME_WIDTH)
+    current_h = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
+    print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
+
     '''Allow user to capture image by pressing q'''
     while True:
         # Capture frame-by-frame
@@ -87,6 +92,12 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     if not capture.isOpened():
         print("Cannot open camera")
         exit()
+
+    # 3. VERIFY the change
+    current_w = capture.get(cv.CAP_PROP_FRAME_WIDTH)
+    current_h = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
+    print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
+
 
     '''Allow user to capture image by pressing q'''
     while True:

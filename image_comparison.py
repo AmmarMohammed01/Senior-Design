@@ -16,7 +16,7 @@ import cv2 as cv
 import numpy as np
 
 # --- Pure-Python SSIM implementation ---
-def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255):
+def ssim(img1, img2, window_size=11, K1=0.01, K2=0.03, L=255): # changed window_size 11 to 5
     """
     Compute the Structural Similarity Index (SSIM) between two grayscale images.
     Pure Python + NumPy + OpenCV, no C extensions.
@@ -79,7 +79,7 @@ def compare_boards(img1_file: str | Path, img2_file: str | Path, comparison_file
     img2 = cv.resize(img2, (w, h))
 
     # --- Downscale → blur → upscale trick ---
-    def smooth_blur(img, scale=0.25, kernel=(15, 15), sigma=00):
+    def smooth_blur(img, scale=0.25, kernel=(5, 5), sigma=00): # changed kernel (15,15) to (5,5)
         small = cv.resize(img, (0, 0), fx=scale, fy=scale)
         blurred_small = cv.GaussianBlur(small, kernel, sigma)
         return cv.resize(blurred_small, (img.shape[1], img.shape[0]))
