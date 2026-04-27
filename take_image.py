@@ -11,7 +11,8 @@ from pathlib import Path
 
 # our own .py files
 from image_comparison import compare_boards
-from orb_method import orb_to_align
+# from orb_method import orb_to_align
+from orb_method import align_to_golden
 
 def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""
@@ -148,7 +149,11 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
     '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
     golden_board_filepath = board_dir_path / board_face / "golden.jpg"
-    aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
+    # aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
+    golden_board_image = cv.imread(golden_board_filepath)
+    aligned_board_img = align_to_golden(test_img=cropped_img, golden_img=golden_board_image, golden_pts=)
+
+
     aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
     cv.imwrite(aligned_board_filepath, aligned_board_img)
 

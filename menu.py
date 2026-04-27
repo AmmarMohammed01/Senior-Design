@@ -22,7 +22,7 @@ from take_image_picam import picam_take_golden_board_image, picam_take_test_boar
 import select_camera
 from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
-from map_errors import generate_defect_frequency_map, map_errors
+from map_errors import generate_defect_frequency_map
 import pcb_global_variables as gv
 import ringlight_code as light
 

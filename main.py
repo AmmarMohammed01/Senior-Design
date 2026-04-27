@@ -1,6 +1,4 @@
 # Our own .py files
-from map_errors import map_errors
-# from menu import menu
 from menu import menu_board_manager
 import select_camera
 
