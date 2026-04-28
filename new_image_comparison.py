@@ -66,12 +66,45 @@ def get_pad_count(roi):
     return num_labels
 
 
+def count_components(roi):
+    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
+    # Use OTSU to handle the blue/dark pads better than a fixed 200
+    _, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+    
+    # Optional: Remove tiny noise (the "33" labels)
+    kernel = np.ones((3,3), np.uint8)
+    thresh = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
+    
+    num_labels, _ = cv.connectedComponents(thresh)
+    return num_labels
+
+
+def count_real_pads(roi):
+    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
+    # Use OTSU for better thresholding on different boards
+    _, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+    
+    # Clean up small shadow noise (the "33 labels")
+    kernel = np.ones((3,3), np.uint8)
+    thresh = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
+    
+    # Use Stats to filter out tiny noise particles
+    num_labels, labels, stats, centroids = cv.connectedComponentsWithStats(thresh)
+    
+    valid_pads = 0
+    for i in range(1, num_labels):
+        area = stats[i, cv.CC_STAT_AREA]
+        if area > 30:  # Only count blobs larger than 30 pixels
+            valid_pads += 1
+    return valid_pads
+
+
 def classify_defect(test_roi, golden_roi, meta=None):
     score = template_score(test_roi, golden_roi)
     print("score:", score)
 
     # 1. If images are identical, it's "good". Period.
-    if score > 0.99:
+    if score > 0.85:
         return "good"
 
     if is_missing(test_roi):
@@ -82,9 +115,26 @@ def classify_defect(test_roi, golden_roi, meta=None):
     if detect_bridge(test_roi):
         return "solder_bridge"
     '''
+
+    '''
     # 2. Only check for bridges if the score is lower (meaning something changed)
     # Compare Test count to Gold count
     if get_pad_count(test_roi) < get_pad_count(golden_roi):
+        return "solder_bridge"
+    '''
+
+    '''
+    # 2. Bridge check: only if count DROPS compared to the golden reference
+    if count_components(test_roi) < count_components(golden_roi):
+        return "solder_bridge"
+    '''
+
+    # 2. Comparative Bridge Check
+    test_count = count_real_pads(test_roi)
+    gold_count = count_real_pads(golden_roi)
+    
+    # If the test board has fewer components than the gold standard, it's bridged
+    if test_count < gold_count:
         return "solder_bridge"
 
     if score < 0.5: #0.65

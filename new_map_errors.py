@@ -103,6 +103,29 @@ def build_golden_library(golden_img, labels, class_names):
     return library
 
 
+def align_images(test_img, golden_img):
+    # Convert to grayscale
+    test_gray = cv.cvtColor(test_img, cv.COLOR_BGR2GRAY)
+    gold_gray = cv.cvtColor(golden_img, cv.COLOR_BGR2GRAY)
+
+    # Find the transformation (Motion Model)
+    # This compensates for the board being shifted (Translation)
+    warp_mode = cv.MOTION_TRANSLATION 
+    warp_matrix = np.eye(2, 3, dtype=np.float32)
+    
+    # Run 50 iterations to find the best alignment
+    criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 50, 0.001)
+    
+    try:
+        _, warp_matrix = cv.findTransformECC(gold_gray, test_gray, warp_matrix, warp_mode, criteria)
+        # Warp the test image so it lines up perfectly with the golden one
+        aligned_img = cv.warpAffine(test_img, warp_matrix, (golden_img.shape[1], golden_img.shape[0]), flags=cv.INTER_LINEAR + cv.WARP_INVERSE_MAP)
+        return aligned_img
+    except:
+        # If alignment fails, return the original
+        return test_img
+
+
 def map_errors(test_img_path,
                golden_img_path,
                yolo_labels_path,
@@ -117,6 +140,7 @@ def map_errors(test_img_path,
 
     # ALIGN
     # aligned = align_to_golden(test_img, golden_img, golden_pts)
+    test_img = align_images(test_img, golden_img)
 
     '''
     # ADD CODE TO CHECK ALIGNMENT
