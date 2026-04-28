@@ -38,47 +38,6 @@ def orientation_angle(roi):
     return rect[2]
 
 
-def detect_bridge(roi):
-    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-    _, thresh = cv.threshold(gray, 200, 255, cv.THRESH_BINARY)
-
-    num_labels, _ = cv.connectedComponents(thresh)
-
-    return num_labels < 2  # heuristic
-
-
-def debug_bridge(roi, name="ROI"):
-    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-    _, thresh = cv.threshold(gray, 200, 255, cv.THRESH_BINARY)
-    
-    num_labels, _ = cv.connectedComponents(thresh)
-    print(f"{name} - Labels found: {num_labels}")
-    
-    cv.imshow(f"Threshold Debug: {name}", thresh)
-    return num_labels
-
-
-def get_pad_count(roi):
-    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-    # OTSU handles varying brightness better than a fixed 200
-    _, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-    num_labels, _ = cv.connectedComponents(thresh)
-    return num_labels
-
-
-def count_components(roi):
-    gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-    # Use OTSU to handle the blue/dark pads better than a fixed 200
-    _, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-    
-    # Optional: Remove tiny noise (the "33" labels)
-    kernel = np.ones((3,3), np.uint8)
-    thresh = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
-    
-    num_labels, _ = cv.connectedComponents(thresh)
-    return num_labels
-
-
 def count_pads(roi):
     gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
     # OTSU automatically finds the best threshold for the lighting
@@ -112,35 +71,6 @@ def classify_defect(test_roi, golden_roi, lbl, meta=None):
     if is_missing(test_roi):
         return "missing"
 
-    # debug_bridge(test_roi)
-    '''
-    if detect_bridge(test_roi):
-        return "solder_bridge"
-    '''
-
-    '''
-    # 2. Only check for bridges if the score is lower (meaning something changed)
-    # Compare Test count to Gold count
-    if get_pad_count(test_roi) < get_pad_count(golden_roi):
-        return "solder_bridge"
-    '''
-
-    '''
-    # 2. Bridge check: only if count DROPS compared to the golden reference
-    if count_components(test_roi) < count_components(golden_roi):
-        return "solder_bridge"
-    '''
-
-    '''
-    # 2. Comparative Bridge Check
-    test_count = count_pads(test_roi)
-    gold_count = count_pads(golden_roi)
-    
-    # If pads merged, test_count will be lower than gold_count
-    if test_count < gold_count and gold_count > 0:
-        return "solder_bridge"
-    '''
-
     # ONLY check for bridges on parts that actually have pins/leads
     # This prevents the inductor (470) from ever being called a "bridge"
     # bridgable_parts = ["IC", "Pin_Header", "Small_Resistor"]
@@ -164,3 +94,4 @@ def classify_defect(test_roi, golden_roi, lbl, meta=None):
         return "misaligned"
 
     return "good"
+
