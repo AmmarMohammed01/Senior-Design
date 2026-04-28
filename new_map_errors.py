@@ -166,7 +166,7 @@ def map_errors(test_img_path,
 
         print(lbl.label_name)
         print("Test:", test_roi.shape, "Gold:", golden_roi.shape)
-        defect = classify_defect(test_roi, golden_roi)
+        defect = classify_defect(test_roi, golden_roi, lbl)
 
         h, w = golden_img.shape[:2]
         cx = int(lbl.label_x * w)

@@ -79,27 +79,29 @@ def count_components(roi):
     return num_labels
 
 
-def count_real_pads(roi):
+def count_pads(roi):
     gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-    # Use OTSU for better thresholding on different boards
+    # OTSU automatically finds the best threshold for the lighting
     _, thresh = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
     
-    # Clean up small shadow noise (the "33 labels")
+    # Clean up small noise with a 'Closing' operation
     kernel = np.ones((3,3), np.uint8)
-    thresh = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
-    
-    # Use Stats to filter out tiny noise particles
+    thresh = cv.morphologyEx(thresh, cv.MORPH_CLOSE, kernel)
+
+    # Get stats for every object found
     num_labels, labels, stats, centroids = cv.connectedComponentsWithStats(thresh)
     
-    valid_pads = 0
-    for i in range(1, num_labels):
+    real_pad_count = 0
+    for i in range(1, num_labels): # Skip 0 (background)
         area = stats[i, cv.CC_STAT_AREA]
-        if area > 30:  # Only count blobs larger than 30 pixels
-            valid_pads += 1
-    return valid_pads
+        # ONLY count blobs that are big enough (adjust 50 based on your zoom)
+        if area > 50: 
+            real_pad_count += 1
+            
+    return real_pad_count
 
 
-def classify_defect(test_roi, golden_roi, meta=None):
+def classify_defect(test_roi, golden_roi, lbl, meta=None):
     score = template_score(test_roi, golden_roi)
     print("score:", score)
 
@@ -129,13 +131,26 @@ def classify_defect(test_roi, golden_roi, meta=None):
         return "solder_bridge"
     '''
 
+    '''
     # 2. Comparative Bridge Check
-    test_count = count_real_pads(test_roi)
-    gold_count = count_real_pads(golden_roi)
+    test_count = count_pads(test_roi)
+    gold_count = count_pads(golden_roi)
     
-    # If the test board has fewer components than the gold standard, it's bridged
-    if test_count < gold_count:
+    # If pads merged, test_count will be lower than gold_count
+    if test_count < gold_count and gold_count > 0:
         return "solder_bridge"
+    '''
+
+    # ONLY check for bridges on parts that actually have pins/leads
+    # This prevents the inductor (470) from ever being called a "bridge"
+    # bridgable_parts = ["IC", "Pin_Header", "Small_Resistor"]
+    bridgable_parts = ["Pins"]
+    
+    if lbl.label_name in bridgable_parts:
+        # Comparative check handles the "darker" test solder 
+        # by checking for a drop in component count
+        if count_pads(test_roi) < count_pads(golden_roi):
+            return "solder_bridge"
 
     if score < 0.5: #0.65
         if meta and "angle" in meta:
