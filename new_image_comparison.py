@@ -145,6 +145,7 @@ def classify_defect(test_roi, golden_roi, lbl, meta=None):
     # This prevents the inductor (470) from ever being called a "bridge"
     # bridgable_parts = ["IC", "Pin_Header", "Small_Resistor"]
     bridgable_parts = ["Pins"]
+    unmoveable_part = ["Pads"] # like the input/output pads on buck boost board
     
     if lbl.label_name in bridgable_parts:
         # Comparative check handles the "darker" test solder 

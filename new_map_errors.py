@@ -130,6 +130,7 @@ def map_errors(test_img_path,
                golden_img_path,
                yolo_labels_path,
                yolo_classes_path,
+               output_path,
                golden_pts):
     
     golden_img = cv.imread(golden_img_path)
@@ -178,6 +179,7 @@ def map_errors(test_img_path,
                    cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
     cv.imshow("Result", output)
+    cv.imwrite(output_path, output)
 
     while True:
         if cv.waitKey(1) == ord('q'):
