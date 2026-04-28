@@ -13,6 +13,7 @@ from pathlib import Path
 from image_comparison import compare_boards
 # from orb_method import orb_to_align
 from orb_method import align_to_golden
+from map_errors import get_YOLO_label
 
 def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""
@@ -99,6 +100,8 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     current_h = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
     print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
 
+    get_YOLO_label(
+
 
     '''Allow user to capture image by pressing q'''
     while True:
@@ -110,7 +113,9 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
+        # cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
+        border_thickness = 2 # used to be 5
+        cv.rectangle(frame, (roi[0]-border_thickness, roi[1]-border_thickness), (roi[0]+roi[2]+border_thickness, roi[1]+roi[3]+border_thickness), (0, 255, 0), border_thickness)
 
         cv.imshow('Capture Test Board Image', frame)
         if cv.waitKey(1) == ord('q'):
@@ -162,13 +167,15 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     golden_board_filepath = board_dir_path / board_face / "golden.jpg"
     # aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
     golden_board_image = cv.imread(golden_board_filepath)
-    aligned_board_img = align_to_golden(test_img=cropped_img, golden_img=golden_board_image, golden_pts=)
+    # aligned_board_img = align_to_golden(test_img=cropped_img, golden_img=golden_board_image, golden_pts=)
+    aligned_board_img = None
 
 
-    aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
-    cv.imwrite(aligned_board_filepath, aligned_board_img)
+    # aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
+    # cv.imwrite(aligned_board_filepath, aligned_board_img)
 
     '''RUN IMAGE COMPARISON'''
     comparison_result_filepath = board_dir_path / board_face / comparison_result_file_name
-    compare_boards(golden_board_filepath, aligned_board_filepath, comparison_result_filepath)
+    # compare_boards(golden_board_filepath, aligned_board_filepath, comparison_result_filepath)
+    compare_boards(golden_board_filepath, test_board_filepath, comparison_result_filepath)
 

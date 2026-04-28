@@ -18,7 +18,7 @@ import shutil
 
 # Our own .py files
 from take_image import take_golden_board_image, take_test_board_image
-from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
+# from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 import select_camera
 from launch_image_labeler import launch_image_labeler
 from image_comparison import compare_boards
@@ -162,6 +162,7 @@ def capture_golden_board_image():
         #light.turn_on("bottom")
         take_golden_board_image(gv.selected_board_dir, "bottom")
         #light.turn_off("bottom")
+    '''
     elif select_camera.camera_choice == "picam":
         print(f"Capturing golden board for {gv.board_type}")
         light.turn_on("top")
@@ -172,6 +173,7 @@ def capture_golden_board_image():
         light.turn_on("bottom")
         picam_take_golden_board_image(gv.selected_board_dir, "bottom")
         light.turn_off("bottom")
+    '''
 
     print("Golden board image captured!")
     menu_return()
@@ -202,6 +204,7 @@ def capture_test_board_images():
             take_test_board_image(gv.selected_board_dir, "bottom")
             #light.turn_off("bottom")
             print("Test board image captured!")
+        '''
         elif select_camera.camera_choice == "picam":
             print(f"Capturing test board for {gv.board_type}")
             light.turn_on("top")
@@ -213,6 +216,7 @@ def capture_test_board_images():
             picam_take_test_board_image(gv.selected_board_dir, "bottom")
             light.turn_off("bottom")
             print("Test board image captured!")
+        '''
         menu_return()
     else:
         print("ERROR: Golden board ROI selection not found")
