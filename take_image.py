@@ -13,10 +13,12 @@ from pathlib import Path
 from image_comparison import compare_boards
 # from orb_method import orb_to_align
 from orb_method import align_to_golden
-from map_errors import get_YOLO_label
+from map_errors import yolo_to_rectangle
 
 def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""
+
+    board_and_face_path = board_dir_path / board_face
 
     '''Open Camera'''
     board_face = board_face.lower()
@@ -62,14 +64,14 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
         cv.waitKey(1)
 
     # Save ROI to be used for test board capture (roi.json) file
-    board_roi_filepath = board_dir_path / board_face / "roi.json"
+    board_roi_filepath = board_and_face_path / "roi.json"
     with open(board_roi_filepath, "w") as f:
         json.dump(roi, f)
 
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
 
-    golden_board_filepath = board_dir_path / board_face / "golden.jpg"
+    golden_board_filepath = board_and_face_path / "golden.jpg"
     print(golden_board_filepath)
     # Save and display cropped image
     cv.imwrite(golden_board_filepath, cropped_img)
@@ -77,9 +79,11 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
 def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of TEST board"""
 
+    board_and_face_path = board_dir_path / board_face
+
     roi = (0,0,0,0)
     # load roi data used with golden board
-    board_roi_filepath = board_dir_path / board_face / "roi.json"
+    board_roi_filepath = board_and_face_path / "roi.json"
     with open(board_roi_filepath, "r") as f:
         roi = json.load(f)
 
@@ -100,8 +104,8 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     current_h = capture.get(cv.CAP_PROP_FRAME_HEIGHT)
     print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
 
-    get_YOLO_label(
-
+    yolo_labels_path = board_and_face_path / "golden.txt"
+    all_component_rois = yolo_to_rectangle(yolo_labels_path, current_h, current_w)
 
     '''Allow user to capture image by pressing q'''
     while True:
@@ -116,6 +120,9 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
         # cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
         border_thickness = 2 # used to be 5
         cv.rectangle(frame, (roi[0]-border_thickness, roi[1]-border_thickness), (roi[0]+roi[2]+border_thickness, roi[1]+roi[3]+border_thickness), (0, 255, 0), border_thickness)
+
+        for i, component_roi in enumerate(all_component_rois):
+            cv.rectangle(frame, (component_roi[1]-border_thickness, component_roi[2]-border_thickness), (component_roi[3]+border_thickness, component_roi[4]+border_thickness), (255, 255, 0), border_thickness)
 
         cv.imshow('Capture Test Board Image', frame)
         if cv.waitKey(1) == ord('q'):
@@ -137,7 +144,7 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     Name the file using number. Store number + 1.
     '''
     next_test_num = 1
-    next_test_num_filepath = board_dir_path / board_face / "next-test-img-num.json"
+    next_test_num_filepath = board_and_face_path / "next-test-img-num.json"
 
     test_board_file_name = "test"
     comparison_result_file_name = "compare"
@@ -159,23 +166,23 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
             json.dump((next_test_num + 1), f)
 
     # Save and display cropped image
-    test_board_filepath = board_dir_path / board_face / test_board_file_name
+    test_board_filepath = board_and_face_path / test_board_file_name
     cv.imwrite(test_board_filepath, cropped_img)
     print(f"Saved test board image as {test_board_file_name} in {board_dir_path}")
 
     '''CONVERT TEST IMAGE TO ALIGNED IMAGE IN RELATION TO GOLDEN BOARD'''
-    golden_board_filepath = board_dir_path / board_face / "golden.jpg"
+    golden_board_filepath = board_and_face_path / "golden.jpg"
     # aligned_board_img = orb_to_align(golden_board_filepath, test_board_filepath)
     golden_board_image = cv.imread(golden_board_filepath)
     # aligned_board_img = align_to_golden(test_img=cropped_img, golden_img=golden_board_image, golden_pts=)
     aligned_board_img = None
 
 
-    # aligned_board_filepath = board_dir_path / board_face / aligned_board_file_name
+    # aligned_board_filepath = board_and_face_path / aligned_board_file_name
     # cv.imwrite(aligned_board_filepath, aligned_board_img)
 
     '''RUN IMAGE COMPARISON'''
-    comparison_result_filepath = board_dir_path / board_face / comparison_result_file_name
+    comparison_result_filepath = board_and_face_path / comparison_result_file_name
     # compare_boards(golden_board_filepath, aligned_board_filepath, comparison_result_filepath)
     compare_boards(golden_board_filepath, test_board_filepath, comparison_result_filepath)
 

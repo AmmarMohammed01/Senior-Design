@@ -321,5 +321,30 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
                 cv.waitKey(1)
             break
 
+
+def yolo_to_rectangle(golden_board_components_file, height, width):
+    """Convert YOLO label coordinates to top-left and bottom-right points of a rectangle (a format usable by OpenCV)"""
+
+    component_rois = []
+    all_yolo_coordinates = get_YOLO_label(golden_board_components_file)
+
+    for index, label_info in enumerate(all_yolo_coordinates):
+        label_contents = label_info.split()
+
+        label_class = int(label_contents[0])
+        label_x = float(label_contents[1])
+        label_y = float(label_contents[2])
+        label_width = float(label_contents[3])
+        label_height = float(label_contents[4])
+
+        center_x = label_x * width
+        center_y = label_y * height
+        y1, y2 = center_y - (height * label_height) / 2, center_y + (height * label_height) / 2
+        x1, x2 = center_x - (width * label_width) / 2, center_x + (width * label_width) / 2
+        x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+        # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
+        component_rois.append([label_class, x1, y1, x2, y2])
+
+
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')
