@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 # our own .py files
+from handle_json import roi_write, roi_read
 from image_comparison import compare_boards
 # from orb_method import orb_to_align
 from orb_method import align_to_golden
@@ -65,11 +66,11 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
 
     # Save ROI to be used for test board capture (roi.json) file
     board_roi_filepath = board_and_face_path / "roi.json"
-    with open(board_roi_filepath, "w") as f:
-        json.dump(roi, f)
+    roi_write(board_roi_filepath, roi)
+    x, y, w, h = roi
 
     # Extract cropped region
-    cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
+    cropped_img = frame[int(y):int(y+h), int(x):int(x+w)]
 
     golden_board_filepath = board_and_face_path / "golden.jpg"
     print(golden_board_filepath)
@@ -84,13 +85,14 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     roi = (0,0,0,0)
     # load roi data used with golden board
     board_roi_filepath = board_and_face_path / "roi.json"
-    with open(board_roi_filepath, "r") as f:
-        roi = json.load(f)
+    roi = roi_read(board_roi_filepath)
+    x, y, w, h = roi
 
     '''Open Camera'''
     board_face = board_face.lower()
     camera_index = 0 if board_face == "top" else 1 # other board_face is "bottom"
 
+    print(f"Camera Index: {camera_index}") # DEBUG
     capture = cv.VideoCapture(camera_index)
     capture.set(cv.CAP_PROP_FOURCC, cv.VideoWriter_fourcc(*'MJPG'))
     capture.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
@@ -105,7 +107,7 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
 
     yolo_labels_path = board_and_face_path / "golden.txt"
-    all_component_rois = yolo_to_rectangle(yolo_labels_path, current_h, current_w)
+    all_component_rois = yolo_to_rectangle(yolo_labels_path, h, w)
 
     '''Allow user to capture image by pressing q'''
     while True:
@@ -119,10 +121,10 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
         # cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
         border_thickness = 2 # used to be 5
-        cv.rectangle(frame, (roi[0]-border_thickness, roi[1]-border_thickness), (roi[0]+roi[2]+border_thickness, roi[1]+roi[3]+border_thickness), (0, 255, 0), border_thickness)
+        cv.rectangle(frame, (x-border_thickness, y-border_thickness), (x+w+border_thickness, y+h+border_thickness), (0, 255, 0), border_thickness)
 
         for i, component_roi in enumerate(all_component_rois):
-            cv.rectangle(frame, (component_roi[1]-border_thickness, component_roi[2]-border_thickness), (component_roi[3]+border_thickness, component_roi[4]+border_thickness), (255, 255, 0), border_thickness)
+            cv.rectangle(frame, (x+component_roi[1]-border_thickness, y+component_roi[2]-border_thickness), (x+component_roi[3]+border_thickness, y+component_roi[4]+border_thickness), (255, 255, 0), border_thickness)
 
         cv.imshow('Capture Test Board Image', frame)
         if cv.waitKey(1) == ord('q'):

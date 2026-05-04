@@ -17,6 +17,7 @@ from pathlib import Path
 import shutil
 
 # Our own .py files
+from ml_detection import run_camera
 from take_image import take_golden_board_image, take_test_board_image
 # from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 import select_camera
@@ -25,6 +26,8 @@ from image_comparison import compare_boards
 from map_errors import generate_defect_frequency_map
 import pcb_global_variables as gv
 import ringlight_code as light
+from handle_json import roi_read
+
 
 def menu_board_manager() -> None:
     while True:
@@ -55,6 +58,7 @@ def menu_board_manager() -> None:
             print("Invalid option, try again...")
             menu_return()
 
+
 def menu_board_operations() -> None:
     while True:
         print("\nBOARD SPECIFIC OPERATIONS")
@@ -64,6 +68,9 @@ def menu_board_operations() -> None:
         print("3. Label existing board type")
         print("4. Compare golden and test board images")
         print("5. Generate defect frequency map")
+        print("\n")
+        print("?. Train ML Model (augmentation then train)")
+        print("6. Run ML Detection")
         print("q. Quit\n")
 
         menu_option = input("Type option number here: ")
@@ -79,12 +86,15 @@ def menu_board_operations() -> None:
             run_comparison_board_type()
         elif menu_option == '5':
             option_defect_frequency_map()
+        elif menu_option == '6':
+            option_run_ml_detection()
         elif menu_option == 'q' or menu_option == 'Q':
             print(f"Exiting specific board: {gv.board_type}")
             break
         else:
             print("Invalid option, try again...")
             menu_return()
+
 
 def add_board_type() -> None:
     """Creates a new folder to store images of a specified board type."""
@@ -109,6 +119,7 @@ def add_board_type() -> None:
         print(f"ERROR: The board name, {new_board_name}, is already in use!")
         print("Please try again and select a different board name")
         menu_return()
+
 
 def remove_board_type() -> None:
     """Deletes a folder of a board type, including all images and data within."""
@@ -141,6 +152,7 @@ def remove_board_type() -> None:
         print(f"Invalid option: '{confirm_option}'.")
         menu_return()
 
+
 def capture_golden_board_image():
     """First: user to select a board type.
     Next: Camera window opens.
@@ -154,9 +166,9 @@ def capture_golden_board_image():
     # should we have multiple golden boards?
     if select_camera.camera_choice == "usb":
         print(f"Capturing top golden board for {gv.board_type}")
-        light.turn_on("top")
+        # light.turn_on("top")
         take_golden_board_image(gv.selected_board_dir, "top")
-        light.turn_off("top")
+        # light.turn_off("top")
 
         print(f"Capturing bottom golden board for {gv.board_type}")
         #light.turn_on("bottom")
@@ -178,6 +190,7 @@ def capture_golden_board_image():
     print("Golden board image captured!")
     menu_return()
 
+
 def capture_test_board_images():
     """First: user to select a board type.
     Next: Camera window opens. It loads the rectangular outline user created when capturing golden board to help align test boards.
@@ -195,9 +208,9 @@ def capture_test_board_images():
     if roi_filepath.exists():
         if select_camera.camera_choice == "usb":
             print(f"Capturing top test board for {gv.board_type}")
-            light.turn_on("top")
+            # light.turn_on("top")
             take_test_board_image(gv.selected_board_dir, "top")
-            light.turn_off("top")
+            # light.turn_off("top")
 
             print(f"Capturing bottom test board for {gv.board_type}")
             #light.turn_on("bottom")
@@ -221,6 +234,7 @@ def capture_test_board_images():
     else:
         print("ERROR: Golden board ROI selection not found")
         menu_return()
+
 
 def label_board_type():
     """First: User selects board type.
@@ -258,6 +272,7 @@ def label_board_type():
         print(f"ERROR: The board '{gv.board_type}' with '{board_face}' was not found!")
         menu_return()
 
+
 def view_board_types():
     """This function is used in multiple menu options to give the user
     a sense of what boards already exist in the file system before the
@@ -271,10 +286,12 @@ def view_board_types():
 
     print()
 
+
 def view_board_types_option():
     """This is the actual (standalone) menu option that allows the user to see the existing board types"""
     view_board_types()
     menu_return()
+
 
 def run_comparison_board_type():
     """This is the menu option for running a board comparison for a board type.
@@ -359,8 +376,37 @@ def option_defect_frequency_map():
 
     return menu_return()
 
+
+def option_run_ml_detection():
+    """Run ML detection based on selected board. Send image from ROI rectangle to the ML model. Then, overlay the results."""
+    print("RUN ML DETECTION")
+    print("----------------")
+    print(f"CURRENT BOARD: {gv.board_type}")
+
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir_with_face = gv.selected_board_dir / board_face
+
+    # Check if board type exists, else return to menu
+    if selected_board_dir_with_face.exists():
+        # NOTE: Need to have user add best.pt file
+        model_path = selected_board_dir_with_face / "best.pt"
+
+        # Grab ROI from golden board to show in run_camera()
+        roi_path = selected_board_dir_with_face / "roi.json"
+        roi = roi_read(roi_path)
+        run_camera(model_path, roi)
+
+        menu_return()
+
+    else:
+        print(f"ERROR: The board '{gv.board_type}' with '{board_face}' was not found!")
+        menu_return()
+
+
 def menu_return():
     print("Returning to menu...\n")
+
 
 def select_board():
     view_board_types()
@@ -374,3 +420,4 @@ def select_board():
     else:
         print(f"ERROR: The board '{gv.board_type}' was not found!")
         return menu_return()
+

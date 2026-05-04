@@ -345,6 +345,8 @@ def yolo_to_rectangle(golden_board_components_file, height, width):
         # print(f"(x1, y1): ({x1}, {y1})   (x2, y2): ({x2}, {y2})")
         component_rois.append([label_class, x1, y1, x2, y2])
 
+    return component_rois
+
 
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt')
 # map_errors('./images/board_inferno.jpg', './images/board_golden.txt', './images/classes.txt', './images/board_golden.jpg')
