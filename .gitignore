@@ -6,11 +6,12 @@ labelimg_env
 .DS_Store
 
 # Images
+data
 boards
 images/Board1.png
 images/Board2.png
 images/SSIM*
-labeled\ images
+ARCHIVED/labeled\ images
 progress_images
 
 # Miscellaneous

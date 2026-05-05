@@ -1,8 +1,0 @@
-capacitor
-potentiometer
-LM2596 IC
-inductor
-schottky diode
-small resistor/capacitor
-input terminal
-output terminal
