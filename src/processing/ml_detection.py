@@ -79,6 +79,7 @@ model = YOLO(model_path)
 '''
 def run_camera(model_path, roi, camera_id=0):
     cap = cv2.VideoCapture(camera_id)
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG')) # Fix the 640 width issue, now width is 1920
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
