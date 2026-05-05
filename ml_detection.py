@@ -77,10 +77,10 @@ def draw_summary(frame, results):
 '''
 model = YOLO(model_path)
 '''
-def run_camera(model, roi, camera_id=0):
+def run_camera(model_path, roi, camera_id=0):
     cap = cv2.VideoCapture(camera_id)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     # ── One-time ROI selection ──────────────────────────────
     # print("Draw a rectangle around the board, then press ENTER or SPACE")
@@ -93,13 +93,15 @@ def run_camera(model, roi, camera_id=0):
 
     print("Live camera running — press Q to quit, S to save")
 
+    model = YOLO(model_path)
+
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
         # Crop to board only — matching your training images
-        border_thickness = 2 # used to be 5
+        border_thickness = 1 # used to be 5
         cv2.rectangle(frame, (x-border_thickness, y-border_thickness), (x+w+border_thickness, y+h+border_thickness), (0, 255, 0), border_thickness)
 
         board = frame[y:y+h, x:x+w]
@@ -112,7 +114,7 @@ def run_camera(model, roi, camera_id=0):
         # Put the annotated board back into the full frame
         frame[y:y+h, x:x+w] = board
 
-        cv2.imshow('PCB Defect Detection — Live', frame)
+        cv2.imshow('PCB Defect Detection - Live', frame)
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
@@ -122,3 +124,5 @@ def run_camera(model, roi, camera_id=0):
 
     cap.release()
     cv2.destroyAllWindows()
+    for i in range(4):
+        cv2.waitKey(1)
