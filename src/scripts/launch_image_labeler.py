@@ -11,13 +11,13 @@ from pathlib import Path
 import os
 
 def launch_image_labeler(golden_board_filepath: Path) -> None:
-    SCRIPT_DIR = Path(__file__).parent.resolve()
+    PROJECT_DIR = Path(__file__).resolve().parents[2]
     # venv_python = r"C:\path\to\your\venv39\Scripts\labelImg.exe" # Windows system
-    labelImg_path = SCRIPT_DIR / "labelimg_env/bin/labelImg" # Assumes UNIX-like system
+    labelImg_path = PROJECT_DIR / "labelimg_env/bin/labelImg" # Assumes UNIX-like system
 
     # Tell Qt where to find platform plugins
     os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = (
-        str(SCRIPT_DIR / "labelimg_env/lib/python3.13/site-packages/PyQt5/Qt/plugins/platforms")
+        str(PROJECT_DIR / "labelimg_env/lib/python3.13/site-packages/PyQt5/Qt/plugins/platforms")
     )
 
     try:

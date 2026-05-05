@@ -1,4 +1,4 @@
-import pcb_global_variables as gv
+import src.config.pcb_global_variables as gv
 
 try:
     import board

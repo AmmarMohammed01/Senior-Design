@@ -1,6 +1,6 @@
 # Our own .py files
-from menu import menu_board_manager
-import select_camera
+from src.ui.menu import menu_board_manager
+import src.config.select_camera as select_camera
 
 if __name__ == "__main__":
     '''Select Camera: USB or Pi'''

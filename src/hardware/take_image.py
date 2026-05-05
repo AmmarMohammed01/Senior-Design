@@ -10,11 +10,11 @@ import json
 from pathlib import Path
 
 # our own .py files
-from handle_json import roi_write, roi_read
-from image_comparison import compare_boards
+from src.utils.handle_json import roi_write, roi_read
+from src.processing.image_comparison import compare_boards
 # from orb_method import orb_to_align
-from orb_method import align_to_golden
-from map_errors import yolo_to_rectangle
+from src.processing.orb_method import align_to_golden
+from src.processing.map_errors import yolo_to_rectangle
 
 def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""

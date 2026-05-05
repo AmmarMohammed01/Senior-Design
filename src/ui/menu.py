@@ -17,16 +17,16 @@ from pathlib import Path
 import shutil
 
 # Our own .py files
-from ml_detection import run_camera
-from take_image import take_golden_board_image, take_test_board_image
+from src.processing.ml_detection import run_camera
+from src.processing.image_comparison import compare_boards
+from src.processing.map_errors import generate_defect_frequency_map
 # from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
-import select_camera
-from launch_image_labeler import launch_image_labeler
-from image_comparison import compare_boards
-from map_errors import generate_defect_frequency_map
-import pcb_global_variables as gv
-import ringlight_code as light
-from handle_json import roi_read
+from src.hardware.take_image import take_golden_board_image, take_test_board_image
+import src.hardware.ringlight_code as light
+import src.config.select_camera
+import src.config.pcb_global_variables as gv
+from src.utils.handle_json import roi_read
+from src.scripts.launch_image_labeler import launch_image_labeler
 
 
 def menu_board_manager() -> None:
