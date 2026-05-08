@@ -23,7 +23,7 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
 
     '''Open Camera'''
     board_face = board_face.lower()
-    camera_index = 0 if board_face == "top" else 1 # other board_face is "bottom"
+    camera_index = 0 if board_face == "top" else 2 # /dev/video0 assigned to top camera, /dev/video2 assigned to bottom camera
 
     capture = cv.VideoCapture(camera_index)
     capture.set(cv.CAP_PROP_FOURCC, cv.VideoWriter_fourcc(*'MJPG'))
