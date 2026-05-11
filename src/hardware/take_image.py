@@ -31,7 +31,7 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     capture.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
     if not capture.isOpened():
         print("Cannot open camera")
-        exit()
+        return
 
     # 3. VERIFY the change
     current_w = capture.get(cv.CAP_PROP_FRAME_WIDTH)
@@ -50,12 +50,13 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
 
         cv.imshow('Capture Golden Board Image', frame)
         if cv.waitKey(1) == ord('q'):
-            # When everything done, release the capture
-            capture.release()
-            cv.destroyAllWindows()
-            for i in range(4):
-                cv.waitKey(1)
             break
+
+    # When everything done, release the capture
+    capture.release()
+    cv.destroyAllWindows()
+    for i in range(4):
+        cv.waitKey(1)
 
     # DEV NOTE: LET USER KNOW THEY NEED TO DRAW A RECTANGLE AROUND GOLDEN BOARD LOCATION, this will be used to crop the image and to align with test board images.
     # Let user select ROI (drag a box)
@@ -99,7 +100,7 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
     capture.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
     if not capture.isOpened():
         print("Cannot open camera")
-        exit()
+        return
 
     # 3. VERIFY the change
     current_w = capture.get(cv.CAP_PROP_FRAME_WIDTH)
@@ -128,11 +129,13 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
         cv.imshow('Capture Test Board Image', frame)
         if cv.waitKey(1) == ord('q'):
-            # When everything done, release the capture
-            capture.release()
-            cv.destroyAllWindows()
-            cv.waitKey(1)
             break
+
+
+    # When everything done, release the capture
+    capture.release()
+    cv.destroyAllWindows()
+    cv.waitKey(1)
 
     # Extract cropped region
     cropped_img = frame[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
