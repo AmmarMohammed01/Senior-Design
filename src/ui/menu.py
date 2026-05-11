@@ -23,7 +23,7 @@ from src.processing.map_errors import generate_defect_frequency_map
 # from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 from src.hardware.take_image import take_golden_board_image, take_test_board_image
 import src.hardware.ringlight_code as light
-import src.config.select_camera
+import src.config.select_camera as select_camera
 import src.config.pcb_global_variables as gv
 from src.utils.handle_json import roi_read
 from src.scripts.launch_image_labeler import launch_image_labeler
@@ -395,8 +395,11 @@ def option_run_ml_detection():
         # Grab ROI from golden board to show in run_camera()
         roi_path = selected_board_dir_with_face / "roi.json"
         roi = roi_read(roi_path)
-        run_camera(model_path, roi)
 
+        # Allow users to detect multiple boards, i.e. drawing multiple rectangle regions
+        
+
+        run_camera(model_path, roi)
         menu_return()
 
     else:

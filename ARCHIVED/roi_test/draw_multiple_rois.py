@@ -25,8 +25,9 @@ while True:
     rois.append(roi)
 
 print("here")
-cv2.waitKey(0)
 cv2.destroyAllWindows()
+for i in range(4):
+    cv2.waitKey(1)
 print("there")
 
 print(rois)
