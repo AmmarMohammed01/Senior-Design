@@ -6,13 +6,15 @@ assert img is not None, "Image file not found"
 
 rois = []
 
+enter_index = 0 # prevents exit prompt from running first time loop runs
 while True:
     # Let user select ROI (drag a box)
 
-    user_choice = input("Want to exit ROI drawing process? Y or N")
-    if user_choice == "Y":
-        print("escape")
-        break
+    if enter_index != 0:
+        user_choice = input("Want to exit ROI drawing process? Y or N")
+        if user_choice == "Y":
+            print("escape")
+            break
 
     roi = cv2.selectROI("Select ROI", img, False)
 
