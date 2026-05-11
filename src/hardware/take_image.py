@@ -90,7 +90,7 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
     '''Open Camera'''
     board_face = board_face.lower()
-    camera_index = 0 if board_face == "top" else 1 # other board_face is "bottom"
+    camera_index = 0 if board_face == "top" else 2 # other board_face is "bottom"
 
     print(f"Camera Index: {camera_index}") # DEBUG
     capture = cv.VideoCapture(camera_index)

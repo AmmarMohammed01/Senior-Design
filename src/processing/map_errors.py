@@ -326,7 +326,7 @@ def yolo_to_rectangle(golden_board_components_file, height, width):
     """Convert YOLO label coordinates to top-left and bottom-right points of a rectangle (a format usable by OpenCV)"""
 
     component_rois = []
-    all_yolo_coordinates = get_YOLO_label(golden_board_components_file)
+    all_yolo_coordinates = get_YOLO_label(golden_board_components_file) # REQUIRES BOARD IS LABELED FIRST
 
     for index, label_info in enumerate(all_yolo_coordinates):
         label_contents = label_info.split()

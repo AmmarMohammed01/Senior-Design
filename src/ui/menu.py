@@ -64,8 +64,8 @@ def menu_board_operations() -> None:
         print("\nBOARD SPECIFIC OPERATIONS")
         print(f"CURRENT BOARD: {gv.board_type}")
         print("1. Capture golden board image")
-        print("2. Capture test board images")
-        print("3. Label existing board type")
+        print("2. Label existing board type")
+        print("3. Capture test board images")
         print("4. Compare golden and test board images")
         print("5. Generate defect frequency map")
         print("\n")
@@ -79,9 +79,9 @@ def menu_board_operations() -> None:
         if menu_option == '1':
             capture_golden_board_image()
         elif menu_option == '2':
-            capture_test_board_images()
-        elif menu_option == '3':
             label_board_type()
+        elif menu_option == '3':
+            capture_test_board_images()
         elif menu_option == '4':
             run_comparison_board_type()
         elif menu_option == '5':
