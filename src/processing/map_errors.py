@@ -329,7 +329,11 @@ def yolo_to_rectangle(golden_board_components_file, height, width):
 
     component_rois = []
     all_yolo_coordinates = get_YOLO_label(golden_board_components_file) # REQUIRES BOARD IS LABELED FIRST
-    assert all_yolo_coordinates is not None, "PCB_APP ERROR: labels for golden board not found. Make sure to use YOLO (golden.txt) instead of PascalVOC (golden.xml.txt)"
+    try:
+        assert all_yolo_coordinates is not None, "PCB_APP ERROR: labels for golden board not found. Make sure to use YOLO (golden.txt) instead of PascalVOC (golden.xml.txt)"
+    except AssertionError as e:
+        print(e)
+        return
 
     for index, label_info in enumerate(all_yolo_coordinates):
         label_contents = label_info.split()
