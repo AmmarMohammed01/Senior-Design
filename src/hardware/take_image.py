@@ -15,6 +15,7 @@ from src.processing.image_comparison import compare_boards
 # from orb_method import orb_to_align
 from src.processing.orb_method import align_to_golden
 from src.processing.map_errors import yolo_to_rectangle
+import src.hardware.ringlight_code as light
 
 def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
     """Take image of GOLDEN board"""
@@ -49,7 +50,11 @@ def take_golden_board_image(board_dir_path: Path, board_face: str) -> None:
             break
 
         cv.imshow('Capture Golden Board Image', frame)
-        if cv.waitKey(1) == ord('q'):
+        key = cv.waitKey(1)
+
+        if key == ord('l'):
+            light.toggle_light(board_face)
+        elif key == ord('q'):
             break
 
     # When everything done, release the capture

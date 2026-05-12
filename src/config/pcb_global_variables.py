@@ -6,6 +6,8 @@ board_type = ""
 selected_board_dir = BOARDS_DIR / board_type # not sure if this get recalculated after each time board_type is changed
 
 LIGHTS_AVAILABLE = False
+TOP_LIGHT_ON = False
+BOTTOM_LIGHT_ON = False
 
 '''
 for p in Path(__file__).resolve().parents:

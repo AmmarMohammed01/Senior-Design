@@ -22,7 +22,6 @@ from src.processing.image_comparison import compare_boards
 from src.processing.map_errors import generate_defect_frequency_map
 # from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
 from src.hardware.take_image import take_golden_board_image, take_test_board_image
-import src.hardware.ringlight_code as light
 import src.config.select_camera as select_camera
 import src.config.pcb_global_variables as gv
 from src.utils.handle_json import roi_read
@@ -166,14 +165,10 @@ def capture_golden_board_image():
     # should we have multiple golden boards?
     if select_camera.camera_choice == "usb":
         print(f"Capturing top golden board for {gv.board_type}")
-        # light.turn_on("top")
         take_golden_board_image(gv.selected_board_dir, "top")
-        # light.turn_off("top")
 
         print(f"Capturing bottom golden board for {gv.board_type}")
-        #light.turn_on("bottom")
         take_golden_board_image(gv.selected_board_dir, "bottom")
-        #light.turn_off("bottom")
     '''
     elif select_camera.camera_choice == "picam":
         print(f"Capturing golden board for {gv.board_type}")
@@ -208,14 +203,10 @@ def capture_test_board_images():
     if roi_filepath.exists():
         if select_camera.camera_choice == "usb":
             print(f"Capturing top test board for {gv.board_type}")
-            # light.turn_on("top")
             take_test_board_image(gv.selected_board_dir, "top")
-            # light.turn_off("top")
 
             print(f"Capturing bottom test board for {gv.board_type}")
-            #light.turn_on("bottom")
             take_test_board_image(gv.selected_board_dir, "bottom")
-            #light.turn_off("bottom")
             print("Test board image captured!")
         '''
         elif select_camera.camera_choice == "picam":

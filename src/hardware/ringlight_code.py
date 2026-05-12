@@ -39,6 +39,7 @@ try:
             bottom_pixels.fill(WHITE_COLOR)
             bottom_pixels.show()
 
+
     def turn_off(light_name: str):
         '''Light name = "top" or "bottom"'''
         if light_name == "top":
@@ -47,6 +48,23 @@ try:
         elif light_name == "bottom":
             bottom_pixels.fill(NO_COLOR)
             bottom_pixels.show()
+
+
+    def toggle_light(light_name: str) -> None:
+        '''Toggle the light'''
+        if light_name == "top":
+            gv.TOP_LIGHT_ON = not gv.TOP_LIGHT_ON
+
+        elif light_name == "bottom":
+            gv.BOTTOM_LIGHT_ON = not gv.BOTTOM_LIGHT_ON
+
+        if gv.TOP_LIGHT_ON:
+            turn_on("top")
+            turn_off("bottom")
+
+        elif gv.BOTTOM_LIGHT_ON:
+            turn_on("bottom")
+            turn_off("top")
 
 except (ImportError, ModuleNotFoundError):
     gv.LIGHTS_AVAILABLE = False
