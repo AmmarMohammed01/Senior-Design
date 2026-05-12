@@ -133,6 +133,8 @@ def get_YOLO_label(golden_board_components_file):
 
     except FileNotFoundError:
         print(f"Error: The file '{golden_board_components_file}' was not found")
+        print("Your file may have saved in wrong format: PascalVOC = golden.xml.txt")
+        print("Please relabel the board with: YOLO format = golden.txt")
 
 def get_YOLO_classes(golden_board_classes_file):
     """Get the YOLO label class names
@@ -327,6 +329,7 @@ def yolo_to_rectangle(golden_board_components_file, height, width):
 
     component_rois = []
     all_yolo_coordinates = get_YOLO_label(golden_board_components_file) # REQUIRES BOARD IS LABELED FIRST
+    assert all_yolo_coordinates is not None, "PCB_APP ERROR: labels for golden board not found. Make sure to use YOLO (golden.txt) instead of PascalVOC (golden.xml.txt)"
 
     for index, label_info in enumerate(all_yolo_coordinates):
         label_contents = label_info.split()
