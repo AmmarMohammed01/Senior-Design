@@ -65,7 +65,7 @@ def map_errors(heatmap_img_file, golden_board_components_file, golden_board_clas
     """
 
     golden_board_img = cv.imread(golden_board_img_file)
-    assert golden_board_img is not None, "Error: Golden board image not found."
+    assert golden_board_img is not None, "PCB_APP ERROR: Golden board image not found."
     overlay = golden_board_img.copy()
 
     '''Import heatmap image and get dimensions'''
@@ -132,9 +132,10 @@ def get_YOLO_label(golden_board_components_file):
         return golden_board_component_points
 
     except FileNotFoundError:
-        print(f"Error: The file '{golden_board_components_file}' was not found")
+        print(f"PCB_APP ERROR: The file '{golden_board_components_file}' was not found")
         print("Your file may have saved in wrong format: PascalVOC = golden.xml.txt")
         print("Please relabel the board with: YOLO format = golden.txt")
+        return
 
 def get_YOLO_classes(golden_board_classes_file):
     """Get the YOLO label class names
@@ -148,7 +149,8 @@ def get_YOLO_classes(golden_board_classes_file):
         return golden_board_componennt_names
 
     except FileNotFoundError:
-        print(f"Error: The file '{golden_board_classes_file}' was not found")
+        print(f"PCB_APP ERROR: The file '{golden_board_classes_file}' was not found")
+        return
 
 def detect_possible_defect(img, x1, y1, x2, y2):
     """
@@ -168,7 +170,7 @@ def detect_possible_defect(img, x1, y1, x2, y2):
 
     '''Read Image & Get ROI'''
     # img = cv.imread('image.jpg')
-    assert img is not None, "Error: Image not found or could not be read"
+    assert img is not None, "PCB_APP ERROR: Image not found or could not be read"
     roi = img[y1:y2, x1:x2]
 
     '''Find orange value in ROI'''
@@ -250,7 +252,7 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
         print(comparison_image_file)
 
         comparison_img = cv.imread(comparison_image_file)
-        assert comparison_img is not None, "Error: Golden Board Image Not Found"
+        assert comparison_img is not None, "PCB_APP ERROR: Golden Board Image Not Found"
         height = 0
         width = 0
 
@@ -285,7 +287,7 @@ def generate_defect_frequency_map(yolo_coordinates_filepath, selected_board_dir,
 
     '''Display counter on center of each component overlayed on golden board image'''
     golden_board_img = cv.imread(golden_board_filepath)
-    assert golden_board_img is not None, "Error: Golden Board Image Not Found"
+    assert golden_board_img is not None, "PCB_APP ERROR: Golden Board Image Not Found"
     height = 0
     width = 0
 
@@ -332,7 +334,7 @@ def yolo_to_rectangle(golden_board_components_file, height, width):
     try:
         assert all_yolo_coordinates is not None, "PCB_APP ERROR: labels for golden board not found. Make sure to use YOLO (golden.txt) instead of PascalVOC (golden.xml.txt)"
     except AssertionError as e:
-        print(e)
+        # print(e)
         return
 
     for index, label_info in enumerate(all_yolo_coordinates):

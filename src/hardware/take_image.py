@@ -112,7 +112,7 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
         all_component_rois = yolo_to_rectangle(yolo_labels_path, h, w)
         assert all_component_rois is not None, "PCB_APP ERROR: Labels for golden board not found (golden.txt / YOLO format). You may have accidently drawn labels in PascalVOC format / golden.xml.txt. Please re-draw labels in YOLO format."
     except AssertionError as e:
-        print(e)
+        print(e) # Assert message from try block printed here
         return
 
     '''Allow user to capture image by pressing q'''
