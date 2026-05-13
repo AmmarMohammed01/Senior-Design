@@ -120,7 +120,21 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
         print(e) # Assert message from try block printed here
         return
 
-    '''Allow user to capture image by pressing q'''
+    # WHILE LOOP VARIABLES
+    draw_components = False
+    BORDER_THICKNESS = 2 # used to be 5
+    COMPONENT_BORDER_THICKNESS = 1
+
+    '''
+    WHILE LOOP
+    Purpose:
+    - Draw border to allow user to place board in same place as golden board.
+    - Draw component borders to allow user to align individual components.
+
+    Controls:
+    - Allow user to capture image by pressing q.
+    - Allow user to toggle component borders by pressing d.
+    '''
     while True:
         # Capture frame-by-frame
         ret, frame = capture.read()
@@ -130,16 +144,24 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        # cv.rectangle(frame, (roi[0]-5, roi[1]-5), (roi[0]+roi[2]+5, roi[1]+roi[3]+5), (0, 255, 0), 5)
-        border_thickness = 2 # used to be 5
-        cv.rectangle(frame, (x-border_thickness, y-border_thickness), (x+w+border_thickness, y+h+border_thickness), (0, 255, 0), border_thickness)
+        # Draw border of where board is placed
+        cv.rectangle(frame, (x-BORDER_THICKNESS, y-BORDER_THICKNESS), (x+w+BORDER_THICKNESS, y+h+BORDER_THICKNESS), (0, 255, 0), BORDER_THICKNESS)
 
-        for i, component_roi in enumerate(all_component_rois):
-            cv.rectangle(frame, (x+component_roi[1]-border_thickness, y+component_roi[2]-border_thickness), (x+component_roi[3]+border_thickness, y+component_roi[4]+border_thickness), (255, 255, 0), border_thickness)
+        # Draw border for each component
+        if draw_components:
+            for i, component_roi in enumerate(all_component_rois):
+                cv.rectangle(frame, (x+component_roi[1]-COMPONENT_BORDER_THICKNESS, y+component_roi[2]-COMPONENT_BORDER_THICKNESS), (x+component_roi[3]+COMPONENT_BORDER_THICKNESS, y+component_roi[4]+COMPONENT_BORDER_THICKNESS), (255, 255, 0), COMPONENT_BORDER_THICKNESS)
 
         cv.imshow('Capture Test Board Image', frame)
-        if cv.waitKey(1) == ord('q'):
-            break
+
+        key = cv.waitKey(1)
+
+        if key == ord('d'):
+            draw_components = not draw_components # Allow user to toggle the component boxes
+
+        if key == ord('q'):
+            if draw_components == False:
+                break
 
 
     # When everything done, release the capture
