@@ -79,7 +79,7 @@ model = YOLO(model_path)
 '''
 def run_camera(model_path, roi, camera_id=0):
     cap = cv2.VideoCapture(camera_id)
-    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG')) # Fix the 640 width issue, now width is 1920
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
@@ -96,18 +96,19 @@ def run_camera(model_path, roi, camera_id=0):
 
     model = YOLO(model_path)
 
+    BORDER_THICKNESS = 1 # used to be 5
+
     while True:
         ret, frame = cap.read()
         if not ret:
             break
 
         # Crop to board only — matching your training images
-        border_thickness = 1 # used to be 5
-        cv2.rectangle(frame, (x-border_thickness, y-border_thickness), (x+w+border_thickness, y+h+border_thickness), (0, 255, 0), border_thickness)
+        cv2.rectangle(frame, (x-BORDER_THICKNESS, y-BORDER_THICKNESS), (x+w+BORDER_THICKNESS, y+h+BORDER_THICKNESS), (0, 255, 0), BORDER_THICKNESS)
 
         board = frame[y:y+h, x:x+w]
 
-        # Run inference on the cropped board
+        # Run inference on the cropped board, https://docs.ultralytics.com/modes/predict#inference-arguments
         results = model.predict(board, conf=CONF, iou=IOU, imgsz=IMG_SIZE, verbose=False)
         board = draw_detections(board, results)
         board = draw_summary(board, results)

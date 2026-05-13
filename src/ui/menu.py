@@ -15,6 +15,7 @@ capture_test_board_images():
 # File management libraries
 from pathlib import Path
 import shutil
+from tkinter import Tk, filedialog
 
 # Our own .py files
 from src.processing.ml_detection import run_camera
@@ -69,7 +70,9 @@ def menu_board_operations() -> None:
         print("5. Generate defect frequency map")
         print("\n")
         print("?. Train ML Model (augmentation then train)")
-        print("6. Run ML Detection")
+        print("6. Export gold and test board images")
+        print("7. Import ML Model")
+        print("8. Run ML Detection")
         print("q. Quit\n")
 
         menu_option = input("Type option number here: ")
@@ -86,6 +89,10 @@ def menu_board_operations() -> None:
         elif menu_option == '5':
             option_defect_frequency_map()
         elif menu_option == '6':
+            export_images()
+        elif menu_option == '7':
+            import_ml_model()
+        elif menu_option == '8':
             option_run_ml_detection()
         elif menu_option == 'q' or menu_option == 'Q':
             print(f"Exiting specific board: {gv.board_type}")
@@ -378,6 +385,8 @@ def option_run_ml_detection():
     board_face = board_face.lower()
     selected_board_dir_with_face = gv.selected_board_dir / board_face
 
+    camera_index = 0 if board_face == "top" else 2
+
     # Check if board type exists, else return to menu
     if selected_board_dir_with_face.exists():
         # NOTE: Need to have user add best.pt file
@@ -388,14 +397,61 @@ def option_run_ml_detection():
         roi = roi_read(roi_path)
 
         # Allow users to detect multiple boards, i.e. drawing multiple rectangle regions
-        
 
-        run_camera(model_path, roi)
+        run_camera(model_path, roi, camera_id=camera_index)
         menu_return()
 
     else:
         print(f"ERROR: The board '{gv.board_type}' with '{board_face}' was not found!")
         menu_return()
+
+
+def export_data_for_model():
+    print()
+
+
+def import_ml_model():
+    # Open menu, allow user to select folder to drag and paste ML model
+    # Already have code for selecting board
+
+    """
+    Opens a file explorer so the user can select a file,
+    then copies it into the destination folder.
+    """
+
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir_with_face = gv.selected_board_dir / board_face
+
+    # Hide tkinter root window
+    root = Tk()
+    root.withdraw()
+
+    # Open file explorer
+    selected_file = filedialog.askopenfilename(
+        title="Select a file"
+    )
+
+    # User cancelled
+    if not selected_file:
+        print("No file selected.")
+        return None
+
+    source_path = Path(selected_file)
+    destination_path = Path(selected_board_dir_with_face)
+
+    # Create destination folder if needed
+    destination_path.mkdir(parents=True, exist_ok=True)
+
+    # Final copied file path
+    final_path = destination_path / source_path.name
+
+    # Copy file
+    shutil.copy2(source_path, final_path)
+
+    print(f"Uploaded file to: {final_path}")
+
+    return final_path
 
 
 def menu_return():
