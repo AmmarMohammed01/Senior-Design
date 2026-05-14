@@ -3,7 +3,7 @@ import board
 import neopixel
 
 # Configuration
-PIXEL_PIN = board.D18   # GPIO18
+PIXEL_PIN = board.D12   # GPIO18 & GPIO12
 NUM_PIXELS = 16
 BRIGHTNESS = 0.3        # 0.0 to 1.0
 

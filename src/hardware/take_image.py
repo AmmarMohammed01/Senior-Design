@@ -158,6 +158,8 @@ def take_test_board_image(board_dir_path: Path, board_face: str) -> None:
 
         if key == ord('d'):
             draw_components = not draw_components # Allow user to toggle the component boxes
+        if key == ord('l'):
+            light.toggle_light(board_face)
 
         if key == ord('q'):
             if draw_components == False:
