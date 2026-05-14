@@ -43,6 +43,18 @@ print(f"Current Resolution: {int(current_w)}x{int(current_h)}")
 LIGHT_ON = False
 
 image_num = 1
+
+def num_read():
+    with open('num.json', "r") as f:
+        image_num = json.load(f)
+        return image_num
+
+def num_write(image_num):
+    with open('num.json', "w") as f:
+        json.dump(image_num, f)
+
+image_num = num_read()
+
 while True:
     filename = str(image_num) + '.jpg'
     ret, frame = cap.read()
@@ -59,6 +71,7 @@ while True:
         print(f'Image Captured {filename}')
         cv.imwrite(filename, frame)
         image_num += 1
+        num_write(image_num)
 
     if key == ord('l'):
         LIGHT_ON = not LIGHT_ON
