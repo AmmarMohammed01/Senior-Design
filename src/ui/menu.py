@@ -391,6 +391,7 @@ def option_run_ml_detection():
     if selected_board_dir_with_face.exists():
         # NOTE: Need to have user add best.pt file
         model_path = selected_board_dir_with_face / "best.pt"
+        board_autocrop_model_path = selected_board_dir_with_face / "autocrop.pt"
 
         # Grab ROI from golden board to show in run_camera()
         roi_path = selected_board_dir_with_face / "roi.json"
@@ -398,7 +399,8 @@ def option_run_ml_detection():
 
         # Allow users to detect multiple boards, i.e. drawing multiple rectangle regions
 
-        run_camera(model_path, roi, camera_id=camera_index)
+        # run_camera(model_path, roi, camera_id=camera_index)
+        run_camera(defect_model_path=model_path, autocrop_model_path=board_autocrop_model_path, camera_id=camera_index)
         menu_return()
 
     else:

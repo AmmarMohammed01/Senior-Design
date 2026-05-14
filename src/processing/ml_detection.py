@@ -74,10 +74,7 @@ def draw_summary(frame, results):
     return frame
 
 
-'''
-model = YOLO(model_path)
-'''
-def run_camera(model_path, roi, camera_id=0):
+def run_camera(defect_model_path, autocrop_model_path, camera_id=0): # roi used to be a passed parameter
     cap = cv2.VideoCapture(camera_id)
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
@@ -89,12 +86,13 @@ def run_camera(model_path, roi, camera_id=0):
     # roi = cv2.selectROI("Select board area — press ENTER when done",
                          # first_frame, fromCenter=False, showCrosshair=True)
     # cv2.destroyAllWindows()
-    x, y, w, h = roi
     # ────────────────────────────────────────────────────────
+    # x, y, w, h = roi
 
     print("Live camera running — press Q to quit, S to save")
 
-    model = YOLO(model_path)
+    defect_model = YOLO(defect_model_path)
+    board_autocrop_model = YOLO(autocrop_model_path)
 
     BORDER_THICKNESS = 1 # used to be 5
 
@@ -103,26 +101,45 @@ def run_camera(model_path, roi, camera_id=0):
         if not ret:
             break
 
+
+        board_results = board_autocrop_model.predict(
+            frame,
+            conf=0.7,
+            imgsz=640,    # match training imgsz
+            verbose=False
+        )
+
+        # All detected boards — could be 1, 2, or 3
+        boxes = board_results[0].boxes
+
+        '''
         # Crop to board only — matching your training images
         cv2.rectangle(frame, (x-BORDER_THICKNESS, y-BORDER_THICKNESS), (x+w+BORDER_THICKNESS, y+h+BORDER_THICKNESS), (0, 255, 0), BORDER_THICKNESS)
 
         board = frame[y:y+h, x:x+w]
+        '''
+        for i, box in enumerate(boxes):
+            x1, y1, x2, y2 = map(int, box.xyxy[0].cpu().numpy())
+            board = frame[y1:y2, x1:x2].copy()
 
-        # Run inference on the cropped board, https://docs.ultralytics.com/modes/predict#inference-arguments
-        results = model.predict(board, conf=CONF, iou=IOU, imgsz=IMG_SIZE, verbose=False)
-        board = draw_detections(board, results)
-        board = draw_summary(board, results)
+            # Run inference on the cropped board, https://docs.ultralytics.com/modes/predict#inference-arguments
+            results = defect_model.predict(board, conf=CONF, iou=IOU, imgsz=IMG_SIZE, verbose=False)
+            board = draw_detections(board, results)
+            board = draw_summary(board, results)
 
-        # Put the annotated board back into the full frame
-        frame[y:y+h, x:x+w] = board
+            '''
+            # Put the annotated board back into the full frame
+            frame[y:y+h, x:x+w] = board
+            '''
+            frame[y1:y2, x1:x2] = board
 
-        cv2.imshow('PCB Defect Detection - Live', frame)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
-        elif key == ord('s'):
-            cv2.imwrite('capture.jpg', board)  # saves just the board crop
-            print("Saved capture.jpg")
+            cv2.imshow('PCB Defect Detection - Live', frame)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
+            elif key == ord('s'):
+                cv2.imwrite('capture.jpg', board)  # saves just the board crop
+                print("Saved capture.jpg")
 
     cap.release()
     cv2.destroyAllWindows()
