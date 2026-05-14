@@ -73,7 +73,60 @@ def draw_summary(frame, results):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 1, cv2.LINE_AA)
     return frame
 
-def run_camera_singleboard():
+
+# Single board detection
+def run_camera(model_path, roi, camera_id=0):
+    cap = cv2.VideoCapture(camera_id)
+    cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+    # ── One-time ROI selection ──────────────────────────────
+    # print("Draw a rectangle around the board, then press ENTER or SPACE")
+    # ret, first_frame = cap.read()
+    # roi = cv2.selectROI("Select board area — press ENTER when done",
+                         # first_frame, fromCenter=False, showCrosshair=True)
+    # cv2.destroyAllWindows()
+    x, y, w, h = roi
+    # ────────────────────────────────────────────────────────
+
+    print("Live camera running — press Q to quit, S to save")
+
+    model = YOLO(model_path)
+
+    BORDER_THICKNESS = 1 # used to be 5
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Crop to board only — matching your training images
+        cv2.rectangle(frame, (x-BORDER_THICKNESS, y-BORDER_THICKNESS), (x+w+BORDER_THICKNESS, y+h+BORDER_THICKNESS), (0, 255, 0), BORDER_THICKNESS)
+
+        board = frame[y:y+h, x:x+w]
+
+        # Run inference on the cropped board, https://docs.ultralytics.com/modes/predict#inference-arguments
+        results = model.predict(board, conf=CONF, iou=IOU, imgsz=IMG_SIZE, verbose=False)
+        board = draw_detections(board, results)
+        board = draw_summary(board, results)
+
+        # Put the annotated board back into the full frame
+        frame[y:y+h, x:x+w] = board
+
+        cv2.imshow('PCB Defect Detection - Live', frame)
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
+        elif key == ord('s'):
+            cv2.imwrite('capture.jpg', board)  # saves just the board crop
+            print("Saved capture.jpg")
+
+    cap.release()
+    cv2.destroyAllWindows()
+    for i in range(4):
+        cv2.waitKey(1)
+
 
 def run_camera_multiboard(defect_model_path, autocrop_model_path, camera_id=0): # roi used to be a passed parameter
     cap = cv2.VideoCapture(camera_id)

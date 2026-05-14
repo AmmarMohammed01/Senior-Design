@@ -17,7 +17,7 @@ from pathlib import Path
 import shutil
 
 # Our own .py files
-from src.processing.ml_detection import run_camera
+from src.processing.ml_detection import run_camera, run_camera_multiboard
 from src.processing.image_comparison import compare_boards
 from src.processing.map_errors import generate_defect_frequency_map
 # from take_image_picam import picam_take_golden_board_image, picam_take_test_board_image
@@ -73,6 +73,7 @@ def menu_board_operations() -> None:
         print("6. Export gold and test board images")
         print("7. Import ML Model")
         print("8. Run ML Detection")
+        print("9. Run single board ML detection")
         print("q. Quit\n")
 
         menu_option = input("Type option number here: ")
@@ -94,6 +95,8 @@ def menu_board_operations() -> None:
             option_import_ml_model()
         elif menu_option == '8':
             option_run_ml_detection()
+        elif menu_option == '9':
+            option_run_single_ml_detection()
         elif menu_option == 'q' or menu_option == 'Q':
             print(f"Exiting specific board: {gv.board_type}")
             break
@@ -407,6 +410,36 @@ def option_run_ml_detection():
         print(f"ERROR: The board '{gv.board_type}' with '{board_face}' was not found!")
         menu_return()
 
+
+def option_run_single_ml_detection():
+    """Run ML detection based on selected board. Send image from ROI rectangle to the ML model. Then, overlay the results."""
+    print("RUN ML DETECTION")
+    print("----------------")
+    print(f"CURRENT BOARD: {gv.board_type}")
+
+    board_face = input("Select board face ('top' or 'bottom'): ")
+    board_face = board_face.lower()
+    selected_board_dir_with_face = gv.selected_board_dir / board_face
+
+    camera_index = 0 if board_face == "top" else 2
+
+    # Check if board type exists, else return to menu
+    if selected_board_dir_with_face.exists():
+        # NOTE: Need to have user add best.pt file
+        model_path = selected_board_dir_with_face / "best.pt"
+
+        # Grab ROI from golden board to show in run_camera()
+        roi_path = selected_board_dir_with_face / "roi.json"
+        roi = roi_read(roi_path)
+
+        # Allow users to detect multiple boards, i.e. drawing multiple rectangle regions
+
+        run_camera(model_path, roi, camera_id=camera_index)
+        menu_return()
+
+    else:
+        print(f"ERROR: The board '{gv.board_type}' with '{board_face}' was not found!")
+        menu_return()
 
 def export_data_for_model():
     board_face = input("Select board face ('top' or 'bottom'): ")
