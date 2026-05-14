@@ -54,6 +54,7 @@ def num_write(image_num):
         json.dump(image_num, f)
 
 image_num = num_read()
+print(image_num)
 
 while True:
     filename = str(image_num) + '.jpg'
