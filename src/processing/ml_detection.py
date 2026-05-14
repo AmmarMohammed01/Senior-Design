@@ -73,8 +73,9 @@ def draw_summary(frame, results):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 1, cv2.LINE_AA)
     return frame
 
+def run_camera_singleboard():
 
-def run_camera(defect_model_path, autocrop_model_path, camera_id=0): # roi used to be a passed parameter
+def run_camera_multiboard(defect_model_path, autocrop_model_path, camera_id=0): # roi used to be a passed parameter
     cap = cv2.VideoCapture(camera_id)
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  1920)
