@@ -18,9 +18,9 @@
     - Solder Bridges
 
 ## Contributions for Software
-Ammar: SSIM and ML code, dual-camera capture code, board-image filesystem, Raspberry Pi ringlight code.
-Isaac: Graphical User Interface (GUI) code.
-Mohammed: Arduino code interfacing relay.
+- Ammar: SSIM and ML code, dual-camera capture code, board-image filesystem, Raspberry Pi ringlight code.
+- Isaac: Graphical User Interface (GUI) code.
+- Mohammed: Arduino code interfacing relay.
 
 ## How to run code?
 ### First time install python libraries (setting up Python Virtual Enivronment):
