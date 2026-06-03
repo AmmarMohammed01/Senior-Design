@@ -1,4 +1,22 @@
 # Senior-Design
+## About Project
+💡 PCB Visual Defect Inspection: https://github.com/AmmarMohammed01/Senior-Design/
+
+- PCB stands for Printed Circuit Boards. They're used to house electrical components.
+- The project aims to **detect potential defects on a PCB**.
+
+## Key Features
+- SSIM Difference Detection
+  - Compares a perfect/"golden" board to a "test" board.
+  - OpenCV allows us to scan differences between the two images of boards. If difference is noticed it is flagged as possible defect.
+- Autocropping ML Model & Defect Detection Model.
+  - The Autocropping ML <odel allows the system to detect where a board or multiple boards is/are located within the camera frame.
+  - After the board is located the Defect Detection YOLO Model is run to identify the following defects:
+    - Misalligned Components
+    - Missing Components
+    - Tombstoning
+    - Solder Bridges
+
 ## How to run code?
 ### First time install python libraries (setting up Python Virtual Enivronment):
 1. Open the folder
